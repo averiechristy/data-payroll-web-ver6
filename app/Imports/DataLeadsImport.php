@@ -12,17 +12,22 @@ class DataLeadsImport implements ToModel, WithHeadingRow
     private $tanggal_awal;
     private $tanggal_akhir;
 
-    public function __construct($tanggal_awal, $tanggal_akhir)
+    private $kcu;
+
+    public function __construct($tanggal_awal, $tanggal_akhir, $kcu)
     {
         $this->tanggal_awal = $tanggal_awal;
         $this->tanggal_akhir = $tanggal_akhir;
+        $this->kcu = $kcu;
+      
     }
+
 
     public function model(array $row)
     {
 
-        
-        
+      
+      
         $existingData = DataLeads::where('cust_name', $row['cust_name'])->first();
 
         
@@ -37,11 +42,12 @@ class DataLeadsImport implements ToModel, WithHeadingRow
                 // Menambahkan 1 ke nomor terakhir
                 $newNo = $lastNo + 1;
         
+
         
         return new DataLeads([
             'no' => $newNo,
             'cust_name' => $row['cust_name'],
-            'kcu_kcp' => $row['kcukcp'],
+            'kcp' => $row['kcukcp'],
             'phone_no' => $row['phone_no'],
             'mobile_phone_no' => $row['mobile_phone_no'],
             'telp_specta' => $row['telp_specta'],
@@ -55,6 +61,8 @@ class DataLeadsImport implements ToModel, WithHeadingRow
             'nama_pic_kbb' => $row['pic_kbb'],
             'tanggal_awal' => $this->tanggal_awal,
             'tanggal_akhir' => $this->tanggal_akhir,
+            'kcu' => $this->kcu,
+            
         ]);
     }
 }

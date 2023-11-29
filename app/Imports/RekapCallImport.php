@@ -29,7 +29,12 @@ class RekapCallImport implements ToModel, WithHeadingRow
                     throw new \Exception(" Invalid status value '{$row['status_follow_up']}'.");
                 }
 
-                
+                $validJenisDataValues = ['Data Leads', 'Referral'];
+
+                if (!in_array($row['data_leads_referral_cabang'], $validJenisDataValues)) {
+                    // Jika tidak valid, buat pesan error
+                    throw new \Exception(" Invalid jenis data value '{$row['data_leads_referral_cabang']}'.");
+                }
               
             $tanggalFollowUp = null;
 

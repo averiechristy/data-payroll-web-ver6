@@ -32,7 +32,7 @@
     <div class="form-group">
         <label for="exampleInputEmail1">Jenis Data</label>
         <select name="jenis_data" class="form-select form-select-sm form-control" aria-label=".form-select-sm example">
-            <option value="" selected disabled>Pilih Jenis Data</option>
+            <option disabled selected>Pilih Jenis Data</option>
             <option value="Referral" {{ (isset($selectedJenis) && $selectedJenis == 'Referral') ? 'selected' : '' }}>Referral</option>
             <option value="Data Leads" {{ (isset($selectedJenis) && $selectedJenis == 'Data Leads') ? 'selected' : '' }}>Data Leads</option>
         </select>
@@ -41,7 +41,7 @@
 
 
 
-
+<!-- Tasks Card Example -->
 <div class="col-xl-2 col-md-6 mb-4">
     <div class="form-group">
         <label for="exampleInputEmail1">Tanggal Awal</label>
@@ -71,13 +71,15 @@
 
 </form>
 
-<!-- <div class="col-xl-2 col-md-6 mb-4">
-    <div class="form-group">
-        <label for="exampleInputEmail1">      </label>
-        <button type="submit" class="btn btn-danger btn-sm form-control mt-2" id="resetFilterBtn">Reset Filter</button>
-    </div>
-</div> -->
+<div class="col-xl-2 col-md-6 mb-4">
 
+<div class="form-group">
+    <label for="exampleInputEmail1">      </label>
+    
+    <button type="submit" class="btn btn-danger btn-sm form-control mt-2">Reset Filter</button>
+  </div>
+  
+</div>
 
 </div>
 
@@ -474,27 +476,6 @@
             },
             cutoutPercentage: 80,
         },
-    });
-</script>
-
-
-<script>
-    // Fungsi untuk mengatur ulang nilai formulir
-    function resetFilter() {
-        // Mengatur ulang nilai formulir ke default
-        document.getElementsByName('kcu')[0].value = "";
-        document.getElementsByName('jenis_data')[0].value = "";
-        document.getElementsByName('tanggal_awal')[0].value = "";
-        document.getElementsByName('tanggal_akhir')[0].value = "";
-
-        // Submit formulir setelah diatur ulang
-        document.getElementById('filterForm').submit();
-    }
-
-    // Menambahkan event listener pada tombol "Reset Filter"
-    document.getElementById('resetFilterBtn').addEventListener('click', function (event) {
-        event.preventDefault(); // Mencegah pengiriman formulir saat tombol "Reset Filter" diklik
-        resetFilter();
     });
 </script>
 

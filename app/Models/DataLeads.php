@@ -12,7 +12,8 @@ class DataLeads extends Model
     protected $fillable = [
         'no',
         'cust_name',
-        'kcu_kcp',
+        'kcu',
+        'kcp',
         'phone_no',
         'mobile_phone_no',
         'telp_specta',

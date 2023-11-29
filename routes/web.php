@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DataLeadsController;
+use App\Http\Controllers\KCUController;
 use App\Http\Controllers\RekapAkuisisiController;
 use App\Http\Controllers\RekapCallController;
 use App\Http\Controllers\UserController;
@@ -35,6 +36,13 @@ Route::delete('/deleteuser/{id}', [UserController::class, 'destroy'])->name('del
 Route::post('/user/{user}/reset-password', [UserController::class,'resetPassword'])->name('reset-password');
 
 
+Route::get('kcu/index',[KCUController::class,'index'])->name('kcu.index');
+Route::get('kcu/create',[KCUController::class,'create'])->name('kcu.create');
+Route::post('kcu/simpan',[KCUController::class,'store'])->name('kcu.simpan');
+Route::get('/tampilkcu/{id}',[KCUController::class,'show'])->name('tampilkcu');
+Route::post('/updatekcu/{id}',[KCUController::class,'update'])->name('updatekcu');
+Route::delete('/deletekcu/{id}', [KCUController::class, 'destroy'])->name('deletekcu');
+
 
 Route::get('dataleads/index', [DataLeadsController::class, 'index'])->name('dataleads.index');
 Route::post('dataleads/import',[DataLeadsController::class,'import'])->name('dataleads.import');
@@ -46,6 +54,12 @@ Route::get('/dataleads/export', [DataLeadsController::class,'export'])->name('da
 
 
 Route::post('rekapakuisisi/import',[RekapAkuisisiController::class,'import'])->name('rekapakuisisi.import');
+
+
+
+Route::post('/filter-data', [DashboardController::class,'filterdata'])->name('filter-data');
+Route::get('/reset-filter',[DashboardController::class,'reset'])->name('reset');
+
 
 });
 

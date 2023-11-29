@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataKCU;
 use App\Models\DataLeads;
 use DB;
 use Illuminate\Http\Request;
@@ -19,8 +20,10 @@ class DataLeadsController extends Controller
     public function index()
     {
         $dataleads = DataLeads::all();
+        $kcu = DataKCU::all();
                 return view('dataleads.index',[
-            'dataleads'=> $dataleads,]
+            'dataleads'=> $dataleads,
+            'kcu' => $kcu,]
         );
     }
 
@@ -38,6 +41,8 @@ class DataLeadsController extends Controller
         $file = $request->file('file');
         $tanggal_awal = $request->input('tanggal_awal');
         $tanggal_akhir = $request->input('tanggal_akhir');
+        $kcu = $request->input('kcu');
+        
 
         if ($tanggal_akhir < $tanggal_awal) {
             
@@ -54,7 +59,7 @@ class DataLeadsController extends Controller
 
 
         // Menggunakan import yang telah dibuat (DataLeadsImport)
-        Excel::import(new DataLeadsImport($tanggal_awal, $tanggal_akhir), $file);
+        Excel::import(new DataLeadsImport($tanggal_awal, $tanggal_akhir, $kcu), $file);
 
         $request->session()->flash('success', 'Data Leads berhasil ditambahkan');
         return redirect(route('dataleads.index'));

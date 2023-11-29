@@ -32,14 +32,30 @@ var ctx = document.getElementById("myBarChart");
 var myBarChart = new Chart(ctx, {
   type: 'bar',
   data: {
-    labels: ["January", "February", "March", "April", "May", "June"],
+    labels: ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober","November","Desember"],
     datasets: [{
-      label: "Revenue",
-      backgroundColor: "#4e73df",
-      hoverBackgroundColor: "#2e59d9",
-      borderColor: "#4e73df",
+      label: "Interested",
+      backgroundColor: "#F94144",
+      // hoverBackgroundColor: "#2e59d9",
+      borderColor: "#F94144",
       data: [4215, 5312, 6251, 7841, 9821, 14984],
-    }],
+    },
+    {
+      label: "Contacted",
+      backgroundColor: "#90BE6D",
+      // hoverBackgroundColor: "#2e59d9",
+      borderColor: "#90BE6D",
+      data: [4215, 5312, 6251, 7841, 9821, 14984, 10444],
+    },
+    {
+      label: "Closing",
+      backgroundColor: "#2D9CDB",
+      // hoverBackgroundColor: "#2e59d9",
+      borderColor: "#2D9CDB",
+      data: [4215, 5312, 6251, 7841, 9821, 14984],
+    },
+
+  ],
   },
   options: {
     maintainAspectRatio: false,
@@ -73,7 +89,7 @@ var myBarChart = new Chart(ctx, {
           padding: 10,
           // Include a dollar sign in the ticks
           callback: function(value, index, values) {
-            return '$' + number_format(value);
+            return  number_format(value);
           }
         },
         gridLines: {
@@ -103,7 +119,7 @@ var myBarChart = new Chart(ctx, {
       callbacks: {
         label: function(tooltipItem, chart) {
           var datasetLabel = chart.datasets[tooltipItem.datasetIndex].label || '';
-          return datasetLabel + ': $' + number_format(tooltipItem.yLabel);
+          return datasetLabel + ' ' + number_format(tooltipItem.yLabel);
         }
       }
     },

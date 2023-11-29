@@ -30,6 +30,12 @@
             <span>Users</span></a>
     </li>
 
+    <li class="nav-item {{ Request::is('kcu/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('kcu.index')}}">
+            
+            <span>Data KCU</span></a>
+    </li>
+
     <li class="nav-item {{ Request::is('dataleads/index') ? 'active' : '' }}">
         <a class="nav-link" href="{{route('dataleads.index')}}"> 
             <span>Data Leads</span></a>

@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataKCU;
+use App\Models\DataLeads;
+
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class DashboardController extends Controller
 {
@@ -10,9 +14,296 @@ class DashboardController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        return view('dashboard');
+{
+    $today = Carbon::now();
+    
+    $startOfWeek = $today->startOfWeek(); 
+    $endOfWeek = $today->copy()->endOfWeek(Carbon::FRIDAY);    
+
+
+    $dataLeads = DataLeads::where('tanggal_awal', '>=', $startOfWeek)
+    ->where('tanggal_awal', '<=', $endOfWeek)
+    ->get();
+
+    $today = Carbon::now();
+    $startOfMonth = $today->startOfMonth();
+    $endOfMonth = $today->copy()->endOfMonth();
+    
+    $dataleads = DataLeads::where('tanggal_awal', '>=', $startOfMonth)
+        ->where('tanggal_awal', '<=', $endOfMonth)
+        ->get();
+
+        
+
+    $kcu = DataKCU::all();
+
+    $dtkcu = DataKCU::all();
+
+    $totalBerminatPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalBerminatPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->where('status', 'Berminat')->count();
     }
+
+    $totalContactedPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalContactedPerKCU[$item->id] = $dataleads->where('kcu', $item->id)
+            ->whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+            ->count();
+    }
+
+    $totalClosingPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalClosingPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->where('status', 'Closing')->count();
+    }
+
+   
+
+    $totalBerminat = $dataleads->where('status', 'Berminat')->count();
+    
+
+    // Menghitung persentase data yang memiliki status 'Berminat'
+    $persentaseBerminat = $dataleads->count() > 0 ? number_format(($totalBerminat / $dataleads->count()) * 100, 1) : 0;
+    
+    // Menghitung total data yang memiliki status tertentu
+    $totalContacted = $dataleads->whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat','Call Again', 'Closing'])->count();
+    
+    // Menghitung persentase data yang memiliki status tertentu
+    $persentaseContacted = $dataleads->count() > 0 ? number_format(($totalContacted / $dataleads->count()) * 100, 1) : 0;
+    
+    // Menghitung total data yang memiliki status 'Closing'
+    $totalClosing = $dataleads->where('status', 'Closing')->count();
+    
+    // Menghitung persentase data yang memiliki status 'Closing'
+    $persentaseClosing = $dataleads->count() > 0 ? number_format(($totalClosing / $dataleads->count()) * 100, 1) : 0;
+
+    
+    $weeklyData = [];
+
+    // Mengelompokkan data leads berdasarkan minggu
+    foreach ($dataleads as $lead) {
+        // Move the calculation of start and end of the week inside the loop
+        $startOfWeek = $today->copy()->startOfWeek(); 
+        $endOfWeek = $today->copy()->endOfWeek(Carbon::FRIDAY);
+    
+        $weekNumber = $endOfWeek->weekOfMonth;
+    
+        $weekRange = 'Week ' . $weekNumber;
+    
+        if (!isset($weeklyData[$weekRange])) {
+            $weeklyData[$weekRange] = [
+                'startDate' => $startOfWeek->format('Y-m-d'),
+                'endDate' => $endOfWeek->format('Y-m-d'),
+                'leads' => collect(),
+                'totalContacted' => 0,
+                'totalClosing' => 0,
+                'totalInterested' => 0,                  
+            ];
+        }
+    
+        $weeklyData[$weekRange]['leads']->push($lead);
+    
+        if (in_array($lead->status, ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])) {
+            $weeklyData[$weekRange]['totalContacted']++;
+        }
+    
+        if ($lead->status == 'Closing') {
+            $weeklyData[$weekRange]['totalClosing']++;
+        }
+    
+        if ($lead->status == 'Berminat') {
+            $weeklyData[$weekRange]['totalInterested']++;
+        }
+    
+        // Update $today to the next week
+        $today->addWeek();
+    }
+
+   
+ 
+
+    return view('dashboard', [
+        'dataleads' => $dataleads,
+        'kcu' => $kcu,
+        'persentaseBerminat' => $persentaseBerminat, 
+        'persentaseContacted' => $persentaseContacted,
+        'persentaseClosing' => $persentaseClosing,
+        'weeklyData' => $weeklyData,
+        'totalBerminatPerKCU' => $totalBerminatPerKCU,
+        'totalContactedPerKCU' => $totalContactedPerKCU,
+        'totalClosingPerKCU' => $totalClosingPerKCU,
+        'dtkcu' => $dtkcu,
+        
+    ]);
+}
+
+public function filterdata(Request $request)
+{
+    $currentMonth = now()->format('m');
+    $selectedKCU = $request->input('kcu');
+    $selectedJenis = $request->input('jenis_data');
+    $tanggalawal = $request->input('tanggal_awal');
+    $tanggalakhir = $request->input('tanggal_akhir');
+
+
+    if ($tanggalakhir < $tanggalawal) {
+            
+        $request->session()->flash('error', 'Tanggal Akhir tidak boleh kurang dari Tanggal Awal.');
+        return redirect(route('dashboard'));
+    }
+
+    
+    $dataKCU = DataKCU::find($selectedKCU);
+    
+    // Mengambil semua data leads pada bulan berjalan
+    $today = Carbon::now();
+    
+    $startOfWeek = $today->startOfWeek(); 
+    $endOfWeek = $today->copy()->endOfWeek(Carbon::FRIDAY);    
+
+
+    $dataLeads = DataLeads::where('tanggal_awal', '>=', $startOfWeek)
+    ->where('tanggal_awal', '<=', $endOfWeek)
+    ->get();
+
+    $today = Carbon::now();
+    $startOfMonth = $today->startOfMonth();
+    $endOfMonth = $today->copy()->endOfMonth();
+    
+    $dataleads = DataLeads::where('tanggal_awal', '>=', $startOfMonth)
+        ->where('tanggal_awal', '<=', $endOfMonth);
+
+
+        if ($tanggalawal && $tanggalakhir) {
+            // Filter berdasarkan range tanggal
+            $dataleads = DataLeads::whereBetween('tanggal_awal', [$tanggalawal, $tanggalakhir]);
+
+            $dataleads = DataLeads::where('tanggal_awal', '>=', $tanggalawal)
+            ->where('tanggal_awal', '<=', $tanggalakhir);
+
+            
+        } 
+
+        dd($dataleads);
+        
+    if ($selectedKCU) {
+        $dataleads->where('kcu', $selectedKCU);
+    }
+
+    
+    if ($selectedJenis) {
+        $dataleads->where('jenis_data', $selectedJenis);
+    }
+
+    $dataleads = $dataleads->get();
+
+    $kcu = DataKCU::all();
+    
+    $dtkcu = DataKCU::all();
+
+    // Total data per KCU
+    $totalBerminatPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalBerminatPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->where('status', 'Berminat')->count();
+    }
+   
+
+    $totalContactedPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalContactedPerKCU[$item->id] = $dataleads->where('kcu', $item->id)
+            ->whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+            ->count();
+    }
+
+    $totalClosingPerKCU = [];
+    foreach ($kcu as $item) {
+        $totalClosingPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->where('status', 'Closing')->count();
+    }
+
+    // $totalBerminatPerKCU = $dataleads->where('status', 'Berminat')->count();
+  
+   
+    // $totalContactedPerKCU = $dataleads->whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat','Call Again', 'Closing'])->count();
+    // $totalClosingPerKCU = $dataleads->where('status', 'Closing')->count();
+
+
+$totalBerminat = $dataleads->where('status', 'Berminat')->count();
+
+$persentaseBerminat = $dataleads->count() > 0 ? number_format(($totalBerminat / $dataleads->count()) * 100, 1) : 0;
+
+
+$totalContacted = $dataleads->whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat','Call Again', 'Closing'])->count();
+
+$persentaseContacted = $dataleads->count() > 0 ? number_format(($totalContacted / $dataleads->count()) * 100, 1) : 0;
+
+$totalClosing = $dataleads->where('status', 'Closing')->count();
+
+$persentaseClosing = $dataleads->count() > 0 ? number_format(($totalClosing / $dataleads->count()) * 100, 1) : 0;
+       
+$weeklyData = [];
+
+// Mengelompokkan data leads berdasarkan minggu
+foreach ($dataleads as $lead) {
+    // Move the calculation of start and end of the week inside the loop
+    $startOfWeek = $today->copy()->startOfWeek(); 
+    $endOfWeek = $today->copy()->endOfWeek(Carbon::FRIDAY);
+
+    $weekNumber = $endOfWeek->weekOfMonth;
+
+    $weekRange = 'Week ' . $weekNumber;
+
+    if (!isset($weeklyData[$weekRange])) {
+        $weeklyData[$weekRange] = [
+            'startDate' => $startOfWeek->format('Y-m-d'),
+            'endDate' => $endOfWeek->format('Y-m-d'),
+            'leads' => collect(),
+            'totalContacted' => 0,
+            'totalClosing' => 0,
+            'totalInterested' => 0,                  
+        ];
+    }
+
+    $weeklyData[$weekRange]['leads']->push($lead);
+
+    if (in_array($lead->status, ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])) {
+        $weeklyData[$weekRange]['totalContacted']++;
+    }
+
+    if ($lead->status == 'Closing') {
+        $weeklyData[$weekRange]['totalClosing']++;
+    }
+
+    if ($lead->status == 'Berminat') {
+        $weeklyData[$weekRange]['totalInterested']++;
+    }
+
+    // Update $today to the next week
+    $today->addWeek();
+}
+
+        session()->put('selectedJenis', $selectedJenis);
+    session()->put('selectedKCU', $selectedKCU);
+    session()->put('tanggalAwal', $tanggalawal);
+    session()->put('tanggalAkhir', $tanggalakhir);
+    
+    return view('dashboard', [
+        'dataleads' => $dataleads,
+        'kcu' => $kcu,
+        'persentaseBerminat' => $persentaseBerminat,
+        'persentaseContacted' => $persentaseContacted,
+        'persentaseClosing' => $persentaseClosing,
+        'weeklyData' => $weeklyData,
+        'totalBerminatPerKCU' => $totalBerminatPerKCU,
+        'totalContactedPerKCU' => $totalContactedPerKCU,
+        'totalClosingPerKCU' => $totalClosingPerKCU,
+        'dtkcu' => $dtkcu,
+        'selectedKCU' =>$selectedKCU,
+        'dataKCU' => $dataKCU,
+        'selectedJenis' => $selectedJenis,
+        'tanggalAwal' => $tanggalawal,
+        'tanggalAkhir' => $tanggalakhir,
+    ]);
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -20,6 +311,11 @@ class DashboardController extends Controller
     public function create()
     {
         //
+    }
+
+    public function reset()
+    {
+        return view ('dashboard');
     }
 
     /**
