@@ -1,7 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
 
-@extends('layouts.app')
+<head>
 
-@section('content')
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Data Payroll</title>
+
+    <!-- Custom fonts for this template-->
+    <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
+    <link
+        href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+        rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <link href="{{asset('css/sb-admin-2.css')}}" rel="stylesheet">
+</head>
+
+<body id="page-top">
+    
+
+<div id="wrapper">
+
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" >
+       
+        <div class="sidebar-brand-text mx-3">Data Payroll</div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item {{ Request::is('dashboard') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('dashboard')}}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">                      
+
+  
+    <!-- Heading -->
+    <li class="nav-item {{ Request::is('user/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('user.index')}}">
+            
+            <span>Users</span></a>
+    </li>
+
+    <li class="nav-item {{ Request::is('kcu/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('kcu.index')}}">
+            
+            <span>Data KCU</span></a>
+    </li>
+
+    <li class="nav-item {{ Request::is('dataleads/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('dataleads.index')}}"> 
+            <span>Data Leads</span></a>
+    </li>
+
+    <li class="nav-item {{ Request::is('rekapcall/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('rekapcall.index')}}"> 
+            <span>Import Data</span></a>
+    </li>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <!-- <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+            aria-expanded="true" aria-controls="collapsePages">
+          
+            <span>Import Data</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a class="collapse-item" href="{{route('rekapcall.index')}}">Rekap Call</a>
+                <a class="collapse-item" href="#">Rekap Akuisisi Payroll</a>
+               
+            </div>
+        </div>
+    </li> -->
+
+    <!-- Nav Item - Tables -->
+   
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+
+</ul>
+<!-- End of Sidebar -->
+
+<!-- Content Wrapper -->
+<div id="content-wrapper" class="d-flex flex-column">
+
+    <!-- Main Content -->
+    <div id="content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+           
+        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+            <!-- Topbar Search -->
+           
+
+            <!-- Topbar Navbar -->
+            <ul class="navbar-nav ml-auto">
+                                    
+                <!-- Nav Item - User Information -->
+                <li class="nav-item dropdown no-arrow">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->nama }}</span>
+                        <img class="img-profile rounded-circle"
+                            src="{{asset('img/undraw_profile.svg')}}">
+                    </a>
+                    <!-- Dropdown - User Information -->
+                    <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="userDropdown">
+                       
+
+                       
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                            <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                            Logout
+                        </a>
+                    </div>
+                </li>
+
+            </ul>
+
+        </nav>
+
+
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
@@ -26,7 +169,6 @@
     </div>
 </div>
 
-
 <!-- Earnings (Annual) Card Example -->
 <div class="col-xl-2 col-md-6 mb-4">   
     <div class="form-group">
@@ -41,23 +183,25 @@
 
 
 
-
 <div class="col-xl-2 col-md-6 mb-4">
+<a  id='tanggal_awal'>
     <div class="form-group">
         <label for="exampleInputEmail1">Tanggal Awal</label>
-        <input type="date" name="tanggal_awal" class="form-control" id="exampleInputEmail1" aria-describedby="date"
+        <input type="text" id="awal_value" name="tanggal_awal" class="form-control" id="exampleInputEmail1" aria-describedby="date"
                value="{{ isset($tanggalAwal) ? $tanggalAwal : '' }}">
     </div>
+</a>
 </div>
 
 <div class="col-xl-2 col-md-6 mb-4">
+    <a  id='tanggal_akhir'>
     <div class="form-group">
         <label for="exampleInputEmail1">Tanggal Akhir</label>
-        <input type="date" name="tanggal_akhir" class="form-control" id="exampleInputEmail1" aria-describedby="date"
+        <input type="text" id="akhir_value" name="tanggal_akhir" class="form-control" id="exampleInputEmail1" aria-describedby="date"
                value="{{ isset($tanggalAkhir) ? $tanggalAkhir : '' }}">
     </div>
+</a>
 </div>
-
 
 
 <div class="col-xl-2 col-md-6 mb-4">
@@ -78,9 +222,7 @@
     </div>
 </div> -->
 
-
 </div>
-
 
                         <!-- Content Row -->
                         <div class="row">
@@ -174,7 +316,6 @@
 </div>
 
 
-
 <!-- Pie Chart -->
 <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
@@ -195,9 +336,7 @@
 </div>
 
 
-
 </div>
-
 
 
 <!-- Area Chart -->
@@ -217,24 +356,27 @@
         </div>
     </div>
 
+    
 
 <!-- Include Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
     var weeklyData = @json($weeklyData);
 
-    var labels = Object.keys(weeklyData);
+    var labels = Object.keys(weeklyData).map(function (week) {
+        return 'Week ' + week;
+    });
+
     var contactedData = labels.map(function (week) {
-        return weeklyData[week].totalContacted;
+        return weeklyData[week.replace('Week ', '')].totalContacted;
     });
-    
+
     var interestedData = labels.map(function (week) {
-        return weeklyData[week].totalInterested;
+        return weeklyData[week.replace('Week ', '')].totalBerminat;
     });
-    
+
     var closingData = labels.map(function (week) {
-        return weeklyData[week].totalClosing;
+        return weeklyData[week.replace('Week ', '')].totalClosing;
     });
 
     var ctx = document.getElementById('myChart').getContext('2d');
@@ -246,28 +388,28 @@
                 label: 'Contacted',
                 data: contactedData,
                 backgroundColor: '#36A2EB',
-                barThickness: 50, 
-        borderWidth: 1,
+                barThickness: 50,
+                borderWidth: 1,
             }, {
                 label: 'Interested',
                 data: interestedData,
-                backgroundColor:'#FF9F40',
-        borderWidth: 1,
-        barThickness: 50, 
+                backgroundColor: '#FF9F40',
+                borderWidth: 1,
+                barThickness: 50,
             }, {
                 label: 'Closing',
                 data: closingData,
-                backgroundColor:'#4BC0C0',
-        borderWidth: 1,
-        barThickness: 50, 
+                backgroundColor: '#4BC0C0',
+                borderWidth: 1,
+                barThickness: 50,
             }]
         },
         options: {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 10, 
-                    min: 0, 
+                    max: 10,
+                    min: 0,
                 }
             }
         }
@@ -341,7 +483,6 @@
         },
     });
 </script>
-
 
 
 
@@ -477,7 +618,6 @@
     });
 </script>
 
-
 <script>
     // Fungsi untuk mengatur ulang nilai formulir
     function resetFilter() {
@@ -498,4 +638,138 @@
     });
 </script>
 
-@endsection
+
+     <!-- Scroll to Top Button-->
+     <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Yakin untuk logout?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Pilih "logout" jika anda yakin untuk mengakhiri sesi anda.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+    @csrf
+</form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="{{asset('vendor/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{{asset('vendor/jquery-easing/jquery.easing.min.js')}}"></script>
+
+
+    <script src="{{asset('js/sb-admin-2.min.js')}}"></script>
+
+<!-- Page level plugins -->
+<script src="{{asset('vendor/chart.js/Chart.min.js')}}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{{asset('js/demo/chart-area-demo.js')}}"></script>
+<!-- <script src="{{asset('js/demo/chart-bar-demo.js')}}"></script> -->
+<!-- <script src="{{asset('js/demo/chart-pie-demo.js')}}"></script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.0/sweetalert.min.js"></script>
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap core JavaScript-->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+    <script>
+$(function() {
+  // Initialize datepicker for tanggal_awal and tanggal_akhir
+  $('#tanggal_awal, #tanggal_akhir').daterangepicker({
+    opens: 'left',
+    locale: {
+      format: 'YYYY-MM-DD',
+    },
+    ranges: {
+      'Today': [moment(), moment()],
+      'This Month': [moment().startOf('month'), moment().endOf('month')],
+      'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+      'This Year': [moment().startOf('year'), moment().endOf('year')],
+      'Last Year': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')]
+    },
+  }, function(start, end, label) {
+    // Callback function, if needed
+    console.log("A new date range selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+
+    // Set the selected range to tanggal_awal and tanggal_akhir
+    $('#awal_value').val(start.format('YYYY-MM-DD'));
+    $('#akhir_value').val(end.format('YYYY-MM-DD'));
+  });
+});
+</script>
+
+<script type="text/javascript">
+ 
+     $('.show_confirm').click(function(event) {
+          var form =  $(this).closest("form");
+          var name = $(this).data("name");
+          event.preventDefault();
+          swal({
+              title: `Apakah anda yakin untuk menghapus data ini?`,
+              text: "Jika anda menghapus data ini, data ini akan hilang selamanya.",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              form.submit();
+            }
+          });
+      });
+  
+</script>
+
+<script type="text/javascript">
+ 
+     $('.show_confirm2').click(function(event) {
+          var form =  $(this).closest("form");
+          var name = $(this).data("name");
+          event.preventDefault();
+          swal({
+              title: `Apakah anda yakin melakukan reset password?`,
+              text: "Jika anda melakukan reset, maka password akan berubah menjadi default password.",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              form.submit();
+            }
+          });
+      });
+  
+</script>
+
+</body>
+
+</html>
+   
+
