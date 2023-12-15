@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Imports\RekapAkuisisiImport;
+use App\Models\DataKCU;
+use App\Models\DataLeads;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -18,23 +20,43 @@ class RekapAkuisisiController extends Controller
 
     public function import(Request $request)
     {
-       
+        $kcu = DataKCU::all();
+        $dataleads = DataLeads::all();
+        $tanggal_awal_akuisisi = $request->input('tanggal_awal');
+        $tanggal_akhir_akuisisi = $request->input('tanggal_akhir');
+        if ($tanggal_akhir_akuisisi < $tanggal_awal_akuisisi) {
+            
+            $request->session()->flash('error', 'Tanggal Akhir tidak boleh kurang dari Tanggal Awal.');
+            return redirect(route('rekapcall.index'));
+        }
+
+        $tanggalAwalBulan = date('m', strtotime($tanggal_awal_akuisisi));
+        $tanggalAkhirBulan = date('m', strtotime($tanggal_akhir_akuisisi));
+
+        if ($tanggalAwalBulan != $tanggalAkhirBulan) {
+            $request->session()->flash('error', 'Tanggal Awal dan Tanggal Akhir harus pada bulan yang sama.');
+            return redirect(route('rekapcall.index'));
+        }
+
         try {
             $file = $request->file('file');
+            $kcu = $request->input('kcu');
             
             // Menggunakan import yang telah dibuat (DataLeadsImport)
-            Excel::import(new RekapAkuisisiImport, $file);
+            Excel::import(new RekapAkuisisiImport( $kcu,$tanggal_awal_akuisisi, $tanggal_akhir_akuisisi), $file);
+
 
             $request->session()->flash('success', 'Rekap Akuisisi berhasil diupload');
             
-            return view('rekapcall.rekapcallindex');
+            return redirect(route('dataleads.index'));
 
         } catch (\Exception $e) {
 
             $errorMessage = $e->getMessage();
         $request->session()->flash('error', 'Terjadi Kesalahan: ' . $errorMessage);
             
-        return view('rekapcall.rekapcallindex');
+        return redirect(route('dataleads.index'));
+
     }
 }
     /**

@@ -26,23 +26,46 @@ class DataLeadsImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
 
+   
       
-      
-        $existingData = DataLeads::where('cust_name', $row['cust_name'])->first();
+        // $existingData = DataLeads::where('cust_name', $row['cust_name'])->first();
 
         
-    // Jika cust_name sudah ada, tidak menyimpan data baru
-    if ($existingData) {
-        throw new \Exception(" Data dengan nama '{$row['cust_name']}' sudah ada."); 
-    }
+        // // Jika cust_name sudah ada, tidak menyimpan data baru
+        //  $existingDataByName = DataLeads::where('cust_name', $row['cust_name'])->first();
+    
+        // // Pengecekan berdasarkan nomor telepon
+        // $existingDataByPhone = DataLeads::where('phone_no', $row['phone_no'])->first();
+    
+        // // Jika ada data dengan nama yang sama
+        // if ($existingDataByName) {
+        //     // Jika phone_no juga sama, throw exception
+        //     if ($existingDataByName->phone_no == $row['phone_no']) {
+        //         throw new \Exception(" Data dengan nama '{$row['cust_name']}' dan nomor telepon '{$row['phone_no']}' sudah ada.");
+        //     }
+        // }
+
+        $existingData = DataLeads::where('cust_name', $row['cust_name'])
+        ->where('kcu', $this->kcu)
+        ->where('tanggal_awal', $this->tanggal_awal)
+        ->where('tanggal_akhir', $this->tanggal_akhir)
+        ->first();
+
+        
+
+        
+        // Jika cust_name sudah ada, tidak menyimpan data baru
+        if ($existingData) {
+            if ($existingData->phone_no == $row['phone_no']) {
+                        throw new \Exception(" Data dengan nama '{$row['cust_name']}' dan nomor telepon '{$row['phone_no']}' sudah ada.");
+                    }
+        }
 
                 // Mendapatkan nomor terakhir
                 $lastNo = DataLeads::max('no');
 
                 // Menambahkan 1 ke nomor terakhir
                 $newNo = $lastNo + 1;
-        
-
         
         return new DataLeads([
             'no' => $newNo,
@@ -62,6 +85,9 @@ class DataLeadsImport implements ToModel, WithHeadingRow
             'tanggal_awal' => $this->tanggal_awal,
             'tanggal_akhir' => $this->tanggal_akhir,
             'kcu' => $this->kcu,
+            'jenis_data' => 'Data Leads',
+            'status' => 'Belum Dikerjakan',
+            
             
         ]);
     }

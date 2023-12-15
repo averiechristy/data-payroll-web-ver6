@@ -3,82 +3,102 @@
 namespace App\Imports;
 
 use App\Models\DataLeads;
+use App\Models\DataLog;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class RekapAkuisisiImport implements ToModel, WithHeadingRow
+class RekapAkuisisiImport implements ToCollection, WithHeadingRow
 {
     protected $currentRow = 0;
+
+    protected $kcu;
+
+
+    private $tanggal_awal_akuisisi;
+    private $tanggal_akhir_akuisisi;
+    
 
     public function headingRow(): int
     {
         return 2; // Set the heading row to 3
     }
 
-    public function model(array $row)
+    public function __construct($kcu, $tanggal_awal_akuisisi, $tanggal_akhir_akuisisi)
     {
+        $this->kcu = $kcu;
+        $this->tanggal_awal_akuisisi = $tanggal_awal_akuisisi;
+        $this->tanggal_akhir_akuisisi = $tanggal_akhir_akuisisi;
+    }
+    public function collection(Collection $rows)
+    {
+
+        set_time_limit(120);
         // Increment the row counter
         $this->currentRow++;
    
+
         // Process only the third row
         // Your existing logic for processing the row goes here
-        foreach ($row as $column => $value) {
+        foreach ($rows as $row) { 
 
-            
             // Check if the customer name exists in the data_leads table
-            $existingLeads = DataLeads::all();
-    
+            $existingLeads = DataLeads::where('cust_name', $row['nama_perusahaan'])
+            ->where('kcu', $this->kcu)
+            ->get();
+
+
             foreach ($existingLeads as $existingLead) {
-                // Compare the similarity of customer names using Jaro-Winkler algorithm
-                $similarityScore = $this->similarity($row['nama_perusahaan'], $existingLead->cust_name);
-
+          
+              
                
-    
-                // You can adjust the threshold as needed
-                $threshold = 0.5;
-    
-                if ($similarityScore > $threshold) {
-                    // Update the existing lead with data from the Excel file
-                    $updateData = [];
-
-                    if ($row['tanggal_terima_formulir_kbb'] !== null) {
-                        $updateData['tanggal_terima_form_kbb'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb'])->format('Y-m-d');
-                    }
-                    else {
-                        $updateData['tanggal_terima_form_kbb'] = null;
-                    }
-    
-    
-    
-                    if ($row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null) {
-                        $updateData['tanggal_terima_form_kbb_payroll'] = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d');
-                    }
-                    else {
-                        $updateData['tanggal_terima_form_kbb_payroll'] = null;
-                    }
-    
-    
+                $jenis_data = $existingLead -> jenis_data;
+               
                 
+                    $lastNo = DataLeads::max('no');
 
-                    $updateData['status'] = ($row['tanggal_terima_formulir_kbb'] && $row['tanggal_terima_formulir_kbb_untuk_payroll']) ? 'Closing' : $existingLead->status;
+                    // Menambahkan 1 ke nomor terakhir
+                    $newNo = $lastNo + 1;
+                  
+
+                    DataLeads::create([
+                        'no' => $newNo,
+                        'cust_name' => $row['nama_perusahaan'],
+                        'jenis_data' => $jenis_data, // Assuming jenis_data is a column in the DataLeads table
+                        'tanggal_terima_form_kbb' => $row['tanggal_terima_formulir_kbb'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb'])->format('Y-m-d') : null,
+                        'tanggal_terima_form_kbb_payroll' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'status' => ($row['tanggal_terima_formulir_kbb'] && $row['tanggal_terima_formulir_kbb_untuk_payroll']) ? 'Closing' : null,
+                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'tanggal_awal' => $this ->tanggal_awal_akuisisi,
+                        'tanggal_akhir' => $this->tanggal_akhir_akuisisi,
+                        'kcu' => $this ->kcu,
+                    ]);
     
-                    // Update the existing lead only if there is data to update
-                    if (!empty($updateData)) {
-                        $existingLead->update($updateData);
-                    }
-                }
+                    $newLeadId = DataLeads::where('cust_name', $row['nama_perusahaan'])->first()->id;
+
+                    // Set data untuk DataLog
+                    $logData = [
+                        'id_data_leads' => $newLeadId,
+                        'jenis_data' => $jenis_data,// Sesuaikan dengan jenis data yang dibuat di DataLeads
+                        'status' => ($row['tanggal_terima_formulir_kbb'] && $row['tanggal_terima_formulir_kbb_untuk_payroll']) ? 'Closing' : null,
+                        'tanggal_follow_up' => null,
+                        'kcu' => $this->kcu, 
+                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                    ];
+
+                    DataLog::create($logData);
+                
             }
         }
     }
     
     // Function to calculate Jaro-Winkler similarity
-    private function similarity($str1, $str2)
-    {
-        similar_text($str1, $str2, $percentage);
-        return $percentage / 100;
-    }
+    // private function similarity($str1, $str2)
+    // {
+    //     similar_text($str1, $str2, $percentage);
+    //     return $percentage / 100;
+    // }
     
 
 

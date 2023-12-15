@@ -12,4 +12,10 @@ class DataKCU extends Model
     protected $fillable = [
         'nama_kcu'
     ];
+
+    public function leadsData()
+    {
+        return $this->hasMany(DataLeads::class, 'id', 'kcu');
+    }
+
 }

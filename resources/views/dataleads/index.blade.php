@@ -7,44 +7,89 @@
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Data Leads</h1>
 
+                    <form action="{{ route('filter.data') }}" method="post">    @csrf
+
+    @include('components.alert')
+                <div class="row">
+
+<!-- Earnings (Monthly) Card Example -->
+<div class="col-xl-2 col-md-6 mb-4">
+    <div class="form-group">
+        <label for="exampleInputEmail1">KCU</label>
+        <select name="kcu" class="form-select form-control form-select-sm" aria-label=".form-select-sm example">
+            <option value="" selected disabled>Pilih KCU </option>
+            @foreach ($kcu as $item)
+                <option value="{{ $item->id }}" {{ (isset($selectedKCU) && $selectedKCU == $item->id) ? 'selected' : '' }}>
+                    {{ $item->nama_kcu }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+</div>
+
+<!-- Earnings (Annual) Card Example -->
+<div class="col-xl-2 col-md-6 mb-4">   
+    <div class="form-group">
+        <label for="exampleInputEmail1">Jenis Data</label>
+        <select name="jenis_data" class="form-select form-select-sm form-control" aria-label=".form-select-sm example">
+            <option value="" selected disabled>Pilih Jenis Data</option>
+            <option value="Referral" {{ (isset($selectedJenis) && $selectedJenis == 'Referral') ? 'selected' : '' }}>Referral</option>
+            <option value="Data Leads" {{ (isset($selectedJenis) && $selectedJenis == 'Data Leads') ? 'selected' : '' }}>Data Leads</option>
+        </select>
+    </div>
+</div>
+
+
+
+<div class="col-xl-2 col-md-6 mb-4">
+<a  id='tanggal_awal'>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Tanggal Awal</label>
+        <input type="date" id="awal_value" name="tanggal_awal" class="form-control" id="exampleInputEmail1" aria-describedby="date"
+               value="{{ isset($tanggalawal) ? $tanggalawal : '' }}" autocomplete="off">
+    </div>
+</a>
+</div>
+
+<div class="col-xl-2 col-md-6 mb-4">
+    <a  id='tanggal_akhir'>
+    <div class="form-group">
+        <label for="exampleInputEmail1">Tanggal Akhir</label>
+        <input type="date" id="akhir_value" name="tanggal_akhir" class="form-control" id="exampleInputEmail1" aria-describedby="date"
+               value="{{ isset($tanggalakhir) ? $tanggalakhir : '' }}" autocomplete="off">
+    </div>
+</a>
+</div>
+
+
+<div class="col-xl-2 col-md-6 mb-4">
+
+<div class="form-group">
+    <label for="exampleInputEmail1">      </label>
+    <button type="submit" class="btn btn-primary btn-sm form-control mt-2">Filter</button>
+  </div>
+  
+</div>
+
+</form>
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                        <form   name="saveform" action="{{ route('dataleads.import') }}" method="POST" onsubmit="return validateForm()" enctype="multipart/form-data">                                         
-                            @csrf
-
-                            <label class="mt-3" for="">Tanggal Awal:</label>
-                            <input type="date" id="tanggal_awal" name="tanggal_awal">
-
-                            <label class="mt-3" for="">Tanggal Akhir:</label>
-                            <input type="date" id="tanggal_akhir" name="tanggal_akhir">
-
-                            <div class="form-group mb-4 mt-2">
-                                                <label for="" class="form-label">Pilih KCU</label>
-
-<select name="kcu" class="form-control " style="border-color: #01004C;" aria-label=".form-select-lg example"  oninvalid="this.setCustomValidity('Pilih salah satu akses')" oninput="setCustomValidity('')" >
-  
-
-<option value="" selected disabled>-- Pilih KCU --</option>
-@foreach ($kcu as $item)
-        <option value="{{ $item->id }}"{{ old('kcu') == $item->id ? 'selected' : '' }}> {{ $item->nama_kcu }}</option>
-    @endforeach
-</select>
-
-                                            </div>
-  
-  <div class="form-group mt-3">
-    <input type="file" name="file" class="form-control-file" id="exampleFormControlFile1">
-  </div>
-  <button type="submit" class="btn btn-primary btn-sm mb-2">Import Data</button>   
-  
+                    
+                        <form action="{{ route('dataleads.export') }}" method="GET" id="exportForm">
+    <input type="hidden" name="kcu" value="{{ $selectedKCU ?? '' }}">
+    <input type="hidden" name="jenis_data" value="{{ $selectedJenis ?? '' }}">
+    <!-- ... other hidden fields for filter data ... -->
+    <button type="submit" style="float: right;" class="btn btn-success btn-sm mb-2">Export Data</button>
 </form>
-<form action="{{ route('dataleads.export') }}" method="GET">
-    <button type="submit" style ="float : right;"class="btn btn-success btn-sm mb-2">Export Data</button>
-</form>
+<form action="{{ route('delete.data') }}" method="post" onsubmit="return confirmDelete();">
+    @csrf
+    <button type="submit" style="float: right; margin-right:6px;" class="btn btn-danger  btn-sm mb-2">Delete Data</button>
 
-                        @include('components.alert')
+
+
                         </div>
+                        
                         <div class="card-body">
 
 
@@ -66,40 +111,97 @@ entries
     </label>
 </div>
 
-                            
-                            <div class="table-responsive">
+
+                       
                           
                                 <table  class="table table-bordered"  width="100%" cellspacing="0" style="border-radius: 10px;">
                                     <thead>
                                         <tr>
+                                        <th>Select</th>
                                           <th>No</th>
+                                          
+                                          <th>Tanggal Awal </th>
+                                          <th>Tanggal Akhir</th>
                                           <th>Nama Customer</th>
+                                          <th>No. Telp</th>
                                           <th>PIC</th>
                                           <th>Status</th>
-                                          <th>Tanggal Terima Form KBB</th>
-                                          <th>Tanggal Terima Form KBB Payroll</th>
+                                          <th>KCU</th>
+                                          <th>Tanggal Terima Form KBB - Sales</th>
+                                          <th>Tanggal Terima Form KBB Payroll - Cabang</th>
                                           <th>Jenis Data</th>
                                           <th>Tanggal Follow Up</th>
+                                          <th>Action</th>
+
                                          
                                         </tr>
                                     </thead>
                                     
                                     <tbody>
+                                       <br>
+                                       <br>
+                                    <div class="form-check">
+    <input class="form-check-input" type="checkbox" id="selectAllCheckbox" onclick="selectAll()">
+    <label class="form-check-label" for="selectAllCheckbox">Select All</label>
+</div>
                                      @foreach ($dataleads as $dataleads)
                                     <tr>
+                                    <td>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="{{ $dataleads->id }}" name="selectedIds[]">
+                        </div>
+                    </td>
                                       <td>{{$dataleads -> no}}</td>
+                                      <td>{{$dataleads -> tanggal_awal}}</td>
+                                      <td>{{$dataleads -> tanggal_akhir}}</td>
                                   <td>{{$dataleads -> cust_name}}</td>
+                                  <td>{{$dataleads -> phone_no}}</td>
                                   <td>{{$dataleads -> nama_pic_kbb}}</td>
                                   <td>{{$dataleads -> status}}</td>
-                                  <td>{{$dataleads -> tanggal_terima_form_kbb}}</td>
+                                  <td>{{ $dataleads->kcuData->nama_kcu }}</td>
+                                                                    <td>{{$dataleads -> tanggal_terima_form_kbb}}</td>
                                   <td>{{$dataleads -> tanggal_terima_form_kbb_payroll}}</td>
                                   <td>{{$dataleads -> jenis_data}}</td>
                                   <td>{{$dataleads -> tanggal_follow_up}}</td>
+                                  <td>
+               
+                                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#rename{{$dataleads->id}}">
+                                    <i class="fas fa-fw fa-edit" style="color:orange" >
+                                </i></a>
+                                
+                                <div class="modal fade" id="rename{{$dataleads->id}}" tabindex="-1" role="dialog" aria-labelledby="renameLabel{{$dataleads->id}}" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="renameLabel{{$dataleads->id}}">Rename Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Form for renaming a folder -->
+                <form action="{{ route('folder.rename', ['id' => $dataleads->id]) }}" method="POST">
+                    @csrf <!-- Untuk melindungi dari serangan CSRF -->
+                    <div class="form-group">
+                        <label for="newFolderName{{$dataleads->id}}">Nama Folder</label>
+                        <input type="text" class="form-control" id="newFolderName{{$dataleads->id}}" name="new_name" value="{{$dataleads->cust_name}}" required>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Rename</button>
+            </form>
+            </div>
+        </div>
+    </div>
+</div>
+                                  </td>
                                     </tr>
                                     @endforeach
                                     </tbody>
 
                                 </table>
+
+</form>
                                 <div class="dataTables_info" id="dataTableInfo" role="status" aria-live="polite">
     Showing <span id="showingStart">1</span> to <span id="showingEnd">10</span> of <span id="totalEntries">0</span> entries
 </div>
@@ -323,4 +425,48 @@ function validateForm() {
     }
 }
 </script>
+
+<!-- Add this script at the end of your existing JavaScript code -->
+<script>
+    function confirmDelete() {
+        var checkboxes = document.getElementsByName('selectedIds[]');
+        var selectedCheckboxes = Array.from(checkboxes).filter(function (checkbox) {
+            return checkbox.checked;
+        });
+
+        if (selectedCheckboxes.length === 0) {
+            alert('Silakan memilih data untuk dihapus');
+            return false;
+        }
+
+        return confirm('Yakin menghapus data?');
+    }
+</script>
+
+<script>
+    // Function to handle "Select All" checkbox
+    function selectAll() {
+        var checkboxes = document.getElementsByName('selectedIds[]');
+        var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = selectAllCheckbox.checked;
+        });
+    }
+
+    // Function to check if all checkboxes are selected
+    function areAllCheckboxesSelected() {
+        var checkboxes = document.getElementsByName('selectedIds[]');
+        return Array.from(checkboxes).every(function (checkbox) {
+            return checkbox.checked;
+        });
+    }
+
+    // Function to handle checkbox change
+    function handleCheckboxChange() {
+        var selectAllCheckbox = document.getElementById('selectAllCheckbox');
+        selectAllCheckbox.checked = areAllCheckboxesSelected();
+    }
+</script>
+
    @endsection

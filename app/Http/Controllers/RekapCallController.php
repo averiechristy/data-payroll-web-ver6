@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Imports\RekapCallImport;
+use App\Models\DataKCU;
+use App\Models\DataLeads;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -13,31 +15,70 @@ class RekapCallController extends Controller
      */
     public function index()
     {
-        return view('rekapcall.rekapcallindex');
+        $kcu = DataKCU::all();
+        $dataleads = DataLeads::all();
+        return view('rekapcall.rekapcallindex',[
+            'kcu' => $kcu,
+            'dataleads' => $dataleads,
+        ]);
     }
 
     
 
     public function import(Request $request)
     {
+        $kcu = DataKCU::all();
+        $dataleads = DataLeads::all();
+        $tanggal_awal_call = $request->input('tanggal_awal');
+        $tanggal_akhir_call = $request->input('tanggal_akhir');
+       
+
+        $dataLeadsBeforeImport =DataLeads::where('tanggal_awal', $tanggal_awal_call)
+        ->where('tanggal_akhir',  $tanggal_akhir_call)
+        ->get();
+
+        
+
+     
+        if ($tanggal_akhir_call < $tanggal_awal_call) {
+            
+            $request->session()->flash('error', 'Tanggal Akhir tidak boleh kurang dari Tanggal Awal.');
+            return redirect(route('rekapcall.index'));
+        }
+
+        $tanggalAwalBulan = date('m', strtotime($tanggal_awal_call));
+        $tanggalAkhirBulan = date('m', strtotime($tanggal_akhir_call));
+
+        if ($tanggalAwalBulan != $tanggalAkhirBulan) {
+            $request->session()->flash('error', 'Tanggal Awal dan Tanggal Akhir harus pada bulan yang sama.');
+            return redirect(route('rekapcall.index'));
+        }
+
        
         try {
             $file = $request->file('file');
-            
+            $kcu = $request->input('kcu');
+         
 
             // Menggunakan import yang telah dibuat (DataLeadsImport)
-            Excel::import(new RekapCallImport, $file);
+            $rekapCallImport = new RekapCallImport($kcu, $tanggal_awal_call, $tanggal_akhir_call);
+            Excel::import($rekapCallImport, $file);
+    
+            $dataLeadsAfterImport = $rekapCallImport->getImportedData();
+           
+            // dd($dataLeadsBeforeImport,$dataLeadsAfterImport);
+            
 
             $request->session()->flash('success', 'Rekap Call berhasil diupload');
             
-            return view('rekapcall.rekapcallindex');
-
+            return redirect(route('dataleads.index'));
         } catch (\Exception $e) {
 
             $errorMessage = $e->getMessage();
         $request->session()->flash('error', 'Terjadi Kesalahan: ' . $errorMessage);
             
-        return view('rekapcall.rekapcallindex');
+        return redirect(route('rekapcall.index'));
+    
     }
 }
     /**
