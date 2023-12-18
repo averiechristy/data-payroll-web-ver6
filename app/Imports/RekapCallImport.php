@@ -42,7 +42,13 @@ class RekapCallImport implements ToCollection, WithHeadingRow
         $foundCustomerNames = [];
 
         foreach ($rows as $row) {
-            
+
+           
+            if (empty(array_filter($row->toArray()))) {
+                // Baris kosong, skip pemrosesan
+                continue;
+            }
+    
             $existingLead = DataLeads::where('cust_name', $row['nama_nasabah'])
             ->where('kcu', $this->kcu) // Menambahkan kondisi untuk memastikan kcu sesuai
             ->where('tanggal_awal', $this->tanggal_awal_call)
@@ -73,6 +79,7 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                             throw new \Exception("Invalid jenis data value '{$row['data_leads_referral_cabang']}'.");
                         }
                     }
+                    
                         $tanggalFollowUp = null;
                         // Check if 'tanggal_follow_up' is not null in the Excel data
                         if (!is_null($row['tanggal_follow_up'])) {
@@ -143,7 +150,7 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                             }
             }
             else {
-
+                if ($row['data_leads_referral_cabang'] === 'Data Leads') {
                 $lastNo = DataLeads::max('no');
                 // Menambahkan 1 ke nomor terakhir
                 $newNo = $lastNo + 1;
@@ -175,6 +182,8 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                 ];
 
                 DataLog::create($logData);
+
+            }
 
                 // Jika customer name tidak ditemukan, buat data baru
                 if ($row['data_leads_referral_cabang'] === 'Referral') {
@@ -238,8 +247,15 @@ class RekapCallImport implements ToCollection, WithHeadingRow
 
 
         
-        $this->importedData = $rows->all();  
-       
+        $nonEmptyRows = $rows->filter(function ($row) {
+            return !empty(array_filter($row->toArray()));
+        });
+    
+        // Jika ada data yang tidak kosong, simpan ke $this->importedData
+        if (!$nonEmptyRows->isEmpty()) {
+            $this->importedData = $nonEmptyRows->all();
+        }
+        
        
         $importedDataNames = collect($this->importedData)->pluck('nama_nasabah')->toArray();
 
@@ -248,7 +264,7 @@ $duplicateNames = array_unique(array_diff_assoc($importedDataNames, array_unique
 
 if (!empty($duplicateNames)) {
     // Ada nama yang sama, beri pesan kesalahan
-    $errorMessage = 'Terjadi kesalahan: Nama-nama berikut memiliki duplikat: ' . implode(', ', $duplicateNames);
+    $errorMessage = 'Dalam file Nama berikut memiliki duplikat: ' . implode(', ', $duplicateNames);
     throw new \Exception($errorMessage);
 
 }

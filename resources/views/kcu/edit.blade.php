@@ -61,7 +61,20 @@
     </div>
 
 
-   
+    <script>
+
+function validateForm() {
+    let namakcu = document.forms["saveform"]["nama_kcu"].value;
+
+
+    if (namakcu == ""){
+        alert("Nama KCU tidak boleh kosong");
+        return false;
+    }
+
+}
+</script>
+
 
   
 @endsection

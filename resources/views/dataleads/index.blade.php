@@ -7,7 +7,8 @@
                     <!-- Page Heading -->
                     <h1 class="h3 mb-2 text-gray-800">Data Leads</h1>
 
-                    <form action="{{ route('filter.data') }}" method="post">    @csrf
+                    <form action="{{ route('filter.data') }}" method="post">    
+                        @csrf
 
     @include('components.alert')
                 <div class="row">
@@ -165,35 +166,10 @@ entries
                                   <td>{{$dataleads -> tanggal_follow_up}}</td>
                                   <td>
                
-                                  <a class="dropdown-item" href="#" data-toggle="modal" data-target="#rename{{$dataleads->id}}">
-                                    <i class="fas fa-fw fa-edit" style="color:orange" >
-                                </i></a>
+                                  <a href="{{route('tampilnama', $dataleads->id)}}"data-toggle="tooltip" class="btn" title='Edit'><i class="fas fa-fw fa-edit" style="color:orange" ></i></a>                 
+
                                 
-                                <div class="modal fade" id="rename{{$dataleads->id}}" tabindex="-1" role="dialog" aria-labelledby="renameLabel{{$dataleads->id}}" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="renameLabel{{$dataleads->id}}">Rename Folder</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <!-- Form for renaming a folder -->
-                <form action="{{ route('folder.rename', ['id' => $dataleads->id]) }}" method="POST">
-                    @csrf <!-- Untuk melindungi dari serangan CSRF -->
-                    <div class="form-group">
-                        <label for="newFolderName{{$dataleads->id}}">Nama Folder</label>
-                        <input type="text" class="form-control" id="newFolderName{{$dataleads->id}}" name="new_name" value="{{$dataleads->cust_name}}" required>
-                    </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Rename</button>
-            </form>
-            </div>
-        </div>
-    </div>
-</div>
+                                
                                   </td>
                                     </tr>
                                     @endforeach

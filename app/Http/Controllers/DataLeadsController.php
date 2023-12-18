@@ -62,7 +62,13 @@ class DataLeadsController extends Controller
        
 
         // Menggunakan import yang telah dibuat (DataLeadsImport)
-        Excel::import(new DataLeadsImport($tanggal_awal, $tanggal_akhir, $kcu), $file);
+
+        $dataleadsImport = new DataLeadsImport($tanggal_awal, $tanggal_akhir, $kcu);
+        Excel::import($dataleadsImport, $file);
+
+        // Excel::import(new DataLeadsImport($tanggal_awal, $tanggal_akhir, $kcu), $file);
+
+        
 
         $request->session()->flash('success', 'Data Leads berhasil ditambahkan');
         return redirect(route('dataleads.index'));
@@ -213,11 +219,13 @@ public function filterData(Request $request)
     public function rename(Request $request, $id)
     {
 
-        $dataleads = DataLeads::find($id);
-       $dataleads ->cust_name = $request->input('new_name');
-       $dataleads ->save();
+        $data = DataLeads::find($id);
+       
+       $data ->cust_name = $request->input('new_name');
+       $data ->save();
     
-        $request->session()->flash('success', 'Nama Customer berhasil direname.');
+       $request->session()->flash('success',  'Nama Customer Berhasil diedit');
+    
         return redirect(route('dataleads.index'));
     }
 
@@ -226,7 +234,10 @@ public function filterData(Request $request)
      */
     public function show(string $id)
     {
-        //
+        $data = DataLeads::find($id);
+        return view('dataleads.editnama',[
+            'data' => $data,
+        ]);
     }
 
     /**

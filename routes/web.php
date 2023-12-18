@@ -66,7 +66,14 @@ Route::post('/delete-data', [DataLeadsController::class,'deleteData'])->name('de
 Route::post('/filter-data-dataleads', [DataLeadsController::class, 'filterData'])->name('filter.data');
 Route::get('admin/changepassword', [AuthController::class,'showChangePasswordForm'])->name('password');
 Route::post('admin/changepassword', [AuthController::class,'adminchangePassword'])->name('change-password');
-Route::post('/dataleads/rename/{id}', [DataLeadsController::class,'rename'])->name('folder.rename');
+Route::post('/rename/{id}', [DataLeadsController::class,'rename'])->name('rename');
+
+Route::get('/tampilnama/{id}',[DataLeadsController::class,'show'])->name('tampilnama');
+
+
+Route::post('/updatenama/{id}',[DataLeadsController::class,'update'])->name('updatenama');
+
+
 });
 
 Route::get('/login', [AuthController::class,'index'])->name('login');

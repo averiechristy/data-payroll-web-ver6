@@ -10,7 +10,15 @@
 @include('components.alert')
 
 
-
+<div id="loading1">
+    <p>Loading...</p>
+</div>
+<div id="loading2">
+    <p>Loading...</p>
+</div>
+<div id="loading3">
+    <p>Loading...</p>
+</div>
 
 <div class="card shadow mb-4">
                     <!-- Page Heading -->
@@ -23,7 +31,7 @@
                     <!-- DataTales Example -->
                
                         <div class="card-body py-3">
-                        <form   name="saveform" action="{{ route('dataleads.import') }}" method="POST" onsubmit="return formvalidasi()" enctype="multipart/form-data">                                         
+                        <form  id= "form1" name="saveform" action="{{ route('dataleads.import') }}" method="POST" onsubmit="return formvalidasi()" enctype="multipart/form-data">                                         
                            
                         @csrf
 
@@ -73,7 +81,7 @@
 
 
 
-                        <form  name="saveformCall" onsubmit="return validateForm()" action="{{route('rekapcall.import')}}" method="POST" enctype="multipart/form-data">
+                        <form id= "form2" name="saveformCall" onsubmit="return validateForm()" action="{{route('rekapcall.import')}}" method="POST" enctype="multipart/form-data">
                             @csrf
 
 
@@ -120,7 +128,7 @@
                     <!-- DataTales Example -->
                
                         <div class="card-body py-3">
-                        <form  name="simpanform" onsubmit="return validasiForm()" action="{{route('rekapakuisisi.import')}}" method="POST" enctype="multipart/form-data">
+                        <form id= "form3"  name="simpanform" onsubmit="return validasiForm()" action="{{route('rekapakuisisi.import')}}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group mb-4 mt-2">
@@ -244,5 +252,68 @@ function formvalidasi() {
     }
 }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form1 = document.getElementById('form1');
+        const form2 = document.getElementById('form2');
+        const form3 = document.getElementById('form3');
+        const loading1 = document.getElementById('loading1');
+        const loading2 = document.getElementById('loading2');
+        const loading3 = document.getElementById('loading3');
 
+        form1.addEventListener('submit', function() {
+            loading1.style.display = 'block';
+        });
+
+        form2.addEventListener('submit', function() {
+            loading2.style.display = 'block';
+        });
+
+        form3.addEventListener('submit', function() {
+            loading3.style.display = 'block';
+        });
+    });
+</script>
+
+<style>
+    #loading1 {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    text-align: center;
+    padding-top: 200px;
+    color: white;
+}
+#loading2 {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    text-align: center;
+    padding-top: 200px;
+    color: white;
+}
+#loading3 {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    text-align: center;
+    padding-top: 200px;
+    color: white;
+}
+</style>
    @endsection

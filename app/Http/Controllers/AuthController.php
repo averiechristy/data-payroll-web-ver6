@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
 
 
-        $request->session()->flash('error', "username atau Password tidak sesuai, silakan coba lagi");
+        $request->session()->flash('error', "Username atau Password tidak sesuai, silakan coba lagi");
         return redirect()->route('login');
     }
 

@@ -2,11 +2,13 @@
 
 namespace App\Imports;
 
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use App\Models\DataLeads;
 
-class DataLeadsImport implements ToModel, WithHeadingRow
+class DataLeadsImport implements ToCollection, WithHeadingRow
 {
 
     private $tanggal_awal;
@@ -14,6 +16,8 @@ class DataLeadsImport implements ToModel, WithHeadingRow
 
     private $kcu;
 
+    private $importedData = [];
+    
     public function __construct($tanggal_awal, $tanggal_akhir, $kcu)
     {
         $this->tanggal_awal = $tanggal_awal;
@@ -23,10 +27,15 @@ class DataLeadsImport implements ToModel, WithHeadingRow
     }
 
 
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
+        set_time_limit(120);
+        foreach ($rows as $row) {
 
-   
+            if (empty(array_filter($row->toArray()))) {
+                // Baris kosong, skip pemrosesan
+                continue;
+            }
       
         // $existingData = DataLeads::where('cust_name', $row['cust_name'])->first();
 
@@ -67,7 +76,7 @@ class DataLeadsImport implements ToModel, WithHeadingRow
                 // Menambahkan 1 ke nomor terakhir
                 $newNo = $lastNo + 1;
         
-        return new DataLeads([
+                DataLeads::create([
             'no' => $newNo,
             'cust_name' => $row['cust_name'],
             'kcp' => $row['kcukcp'],
@@ -91,4 +100,25 @@ class DataLeadsImport implements ToModel, WithHeadingRow
             
         ]);
     }
+    $nonEmptyRows = $rows->filter(function ($row) {
+        return !empty(array_filter($row->toArray()));
+    });
+
+    // Jika ada data yang tidak kosong, simpan ke $this->importedData
+    if (!$nonEmptyRows->isEmpty()) {
+        $this->importedData = $nonEmptyRows->all();
+    }
+    $importedDataNames = collect($this->importedData)->pluck('cust_name')->toArray();
+
+    $duplicateNames = array_unique(array_diff_assoc($importedDataNames, array_unique($importedDataNames)));
+
+if (!empty($duplicateNames)) {
+    // Ada nama yang sama, beri pesan kesalahan
+    $errorMessage = 'Dalam File Nama berikut memiliki duplikat: ' . implode(', ', $duplicateNames);
+    throw new \Exception($errorMessage);
+
+}
+
+
+}
 }

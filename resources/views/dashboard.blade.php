@@ -152,9 +152,19 @@
                 <!-- <button id="exportPdfButton" class="btn btn-primary mb-2 btn-sm">Export to PDF</button> -->
                 <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
-                        <button id="exportPdfButton" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Download Report</button>
+                        <!-- <button id="exportPdfButton" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report</button> -->
                     </div>
+                    
+                    <div class="Download">
+                        <button id="exportPdfButton" style="float: right;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" ><i
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report By Step</button>
+                   
+
+
+                        <button id="exportPdfButtonStatus" style="float: right; margin-right:6px;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report by Status</button>
+                                </div>
 
                 <form action="{{ route('filter-data') }}" method="post">
     @csrf
@@ -229,12 +239,11 @@
 
 </div>
 
+<div id ="chartnew">
 
-<div id="chart">
-
-<div id="piechart">
+<div id ="chartstatus">
                         <!-- Content Row -->
-
+                        
                         <h5 class="mb-0 text-black-800 mb-3">Data by Step</h5>
     <hr>
                         <div class="row">
@@ -386,7 +395,7 @@
 </div>
 
 
-</div>
+
 </div>
 
 
@@ -435,7 +444,6 @@
 </div>
 </div>
 
-<div id="barchart"> 
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -450,14 +458,19 @@
             </div>
         </div>
     </div>
-    </div>
 
+</div>
 
+</div>
 
 <br>
 
+
+<div id="chartchart">
+
 <h5 class="mb-0 text-black-800 mb-3">Data by Status</h5>
     <hr>
+ 
                         <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
@@ -690,7 +703,7 @@
 
 
 </div>
-</div>
+
 
 <div id="barchart"> 
     <div class="card shadow mb-4">
@@ -708,10 +721,13 @@
         </div>
     </div>
     </div>
+    
 
+    </div>
 
 
     </div>
+    
 <!-- Include Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -2060,23 +2076,51 @@ $(function() {
 <script src="https://rawgit.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
 
 <script>
+    
+</script>
+
+<script>
     document.getElementById('exportPdfButton').addEventListener('click', function() {
         // Select the chart container element
-        var chartContainer = document.getElementById('chart');
+        var chartContainer = document.getElementById('chartstatus');
+       
       
         // Set options for html2pdf
         var options = {
             margin: [5, 5, 5, 5], // Adjust margins as needed (top, left, bottom, right)     
-            filename: 'chart_export.pdf',
+            filename: 'chart_export_by_step.pdf',
             image: { type: 'jpeg', quality: 0.98 }, // Set image quality
             html2canvas: { scale: 3 }, // Adjust scale as needed
-            jsPDF: { unit: 'mm', format: 'A1', orientation: 'landscape' } // Adjust format and orientation as needed
+            jsPDF: { unit: 'mm', format: 'A3', orientation: 'landscape' } // Adjust format and orientation as needed
         };
 
         // Use html2pdf to export the chart container as PDF with specified options
         html2pdf(chartContainer, options);
     });
 </script>
+
+<script>
+    document.getElementById('exportPdfButtonStatus').addEventListener('click', function() {
+        // Select the chart container element
+        var chartContainer = document.getElementById('chartchart');
+        
+       
+        // Set options for html2pdf
+        var options = {
+            margin: [5, 5, 5, 5], // Adjust margins as needed (top, left, bottom, right)     
+            filename: 'chart_export_by_step_status.pdf',
+            image: { type: 'jpeg', quality: 0.98 }, // Set image quality
+            html2canvas: { scale: 3 }, // Adjust scale as needed
+            jsPDF: { unit: 'mm', format: 'A3', orientation: 'landscape' } // Adjust format and orientation as needed
+        };
+
+        // Use html2pdf to export the chart container as PDF with specified options
+        html2pdf(chartContainer, options);
+    });
+</script>
+
+
+
 
 </body>
 

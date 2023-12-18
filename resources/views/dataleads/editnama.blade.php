@@ -10,27 +10,17 @@
                                         Tambahkan KCU Baru
                                     </div>
                                     <div class="card-body">
-                                       <form name="saveform" action="{{route('kcu.simpan')}}" method="post" onsubmit="return validateForm()">
+                                       <form name="saveform" action="/rename/{{$data->id}}" method="post" onsubmit="return validateForm()">
                                          
                                        
                                        @csrf
 
-                                          
+                                       <div class="form-group">
+                        <label for="}">Nama Customer</label>
+                        <input type="text" class="form-control" name="new_name" value="{{$data->cust_name}}" required>
+                    </div>  
 
 
-
-
-                                            <div class="form-group mb-4">
-                                                <label for="" class="form-label">Nama KCU</label>
-                                                <input name="nama_kcu" type="text"  class="form-control {{$errors->has('nama_kcu') ? 'is-invalid' : ''}}" style="border-color: #01004C;" value="{{old('nama_kcu')}}"  oninvalid="this.setCustomValidity('Nama user tidak boleh kosong')" oninput="setCustomValidity('')" />
-                                                @if ($errors->has('nama_kcu'))
-                                                    <p class="text-danger">{{$errors->first('nama_kcu')}}</p>
-                                                @endif
-                                            </div>
-                                          
-
-
-                                            
                                              
 
                                           
@@ -61,20 +51,20 @@
     </div>
 
 
-   
     <script>
 
 function validateForm() {
-    let namakcu = document.forms["saveform"]["nama_kcu"].value;
+    let namacust = document.forms["saveform"]["new_name"].value;
 
 
-    if (namakcu == ""){
-        alert("Nama KCU tidak boleh kosong");
+    if (namacust == ""){
+        alert("Nama Customer tidak boleh kosong");
         return false;
     }
 
 }
 </script>
+
 
   
 @endsection

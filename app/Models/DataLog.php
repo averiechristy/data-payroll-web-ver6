@@ -16,6 +16,7 @@ class DataLog extends Model
         'tanggal_follow_up',
         'nama_pic_kbb',
         'kcu',
+        'data_tanggal'
         // Add other fields as needed
     ];
 }
