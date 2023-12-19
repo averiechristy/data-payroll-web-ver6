@@ -33,12 +33,10 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
     }
     public function collection(Collection $rows)
     {
-        
-
+    
         set_time_limit(120);
         // Increment the row counter
         $this->currentRow++;
-   
 
         // Process only the third row
         // Your existing logic for processing the row goes here
@@ -52,14 +50,24 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
             // Check if the customer name exists in the data_leads table
             $existingLeads = DataLeads::where('cust_name', $row['nama_perusahaan'])
             ->where('kcu', $this->kcu) // Menambahkan kondisi untuk memastikan kcu sesuai
-            ->where('tanggal_awal', $this->tanggal_awal_akuisisi)
-            ->where('tanggal_akhir', $this->tanggal_akhir_akuisisi)
+            // ->where('tanggal_awal', $this->tanggal_awal_akuisisi)
+            // ->where('tanggal_akhir', $this->tanggal_akhir_akuisisi)
             ->get();
 
-
+        
             // foreach ($existingLeads as $existingLead) {
 
                 foreach ($existingLeads as $existingLead) {
+                    $tanggal_awal_rekap_akuisisi = new \DateTime($this->tanggal_awal_akuisisi);
+                    $tanggal_akhir_rekap_akuisisi = new \DateTime($this->tanggal_akhir_akuisisi);
+
+
+                    $tanggal_awal = new \DateTime($existingLead->tanggal_awal);
+                    $tanggal_akhir = new \DateTime($existingLead->tanggal_akhir);
+
+                    if ($tanggal_awal_rekap_akuisisi == $tanggal_awal && $tanggal_akhir_rekap_akuisisi == $tanggal_akhir) {
+                      
+
                     // Update the existing record
                     $updateData = ([
                         'tanggal_follow_up' =>$row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
@@ -85,10 +93,8 @@ $jenisdata = $existingLead -> jenis_data;
                     DataLog::create($logData);
         
                 }
-                if ($existingLeads->isEmpty()) {
-                    // ... (Your existing logic for creating new records)
-                
-                    $lastNo = DataLeads::max('no');
+                else {
+                     $lastNo = DataLeads::max('no');
 
                     // Menambahkan 1 ke nomor terakhir
                     $newNo = $lastNo + 1;
@@ -120,6 +126,46 @@ $jenisdata = $existingLead -> jenis_data;
                     ];
 
                     DataLog::create($logData);
+                }
+            }
+                if ($existingLeads->isEmpty()) {
+
+                    $errorMessage = 'Tidak ada data nama perusahaan yang cocok dengan data leads';
+            throw new \Exception($errorMessage);
+                    // // ... (Your existing logic for creating new records)
+                
+                    // $lastNo = DataLeads::max('no');
+
+                    // // Menambahkan 1 ke nomor terakhir
+                    // $newNo = $lastNo + 1;
+                  
+
+                    // DataLeads::create([
+                    //     'no' => $newNo,
+                    //     'cust_name' => $row['nama_perusahaan'],
+                    //     'jenis_data' => $row['sumber_nasabah'], // Assuming jenis_data is a column in the DataLeads table
+                    //     'tanggal_terima_form_kbb' => $row['tanggal_terima_formulir_kbb'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb'])->format('Y-m-d') : null,
+                    //     'tanggal_terima_form_kbb_payroll' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                    //     'status' => ($row['tanggal_terima_formulir_kbb'] && $row['tanggal_terima_formulir_kbb_untuk_payroll']) ? 'Closing' : 'Berminat',
+                    //     'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                    //     'tanggal_awal' => $this ->tanggal_awal_akuisisi,
+                    //     'tanggal_akhir' => $this->tanggal_akhir_akuisisi,
+                    //     'kcu' => $this ->kcu,
+                    // ]);
+    
+                    // $newLeadId = DataLeads::where('cust_name', $row['nama_perusahaan'])->first()->id;
+
+                    // // Set data untuk DataLog
+                    // $logData = [
+                    //     'id_data_leads' => $newLeadId,
+                    //     'jenis_data' => $row['sumber_nasabah'],// Sesuaikan dengan jenis data yang dibuat di DataLeads
+                    //     'status' => ($row['tanggal_terima_formulir_kbb'] && $row['tanggal_terima_formulir_kbb_untuk_payroll']) ? 'Closing' : 'Berminat',
+                    //     'tanggal_follow_up' => null,
+                    //     'kcu' => $this->kcu, 
+                    //     'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                    // ];
+
+                    // DataLog::create($logData);
 
                 }
                 

@@ -68,8 +68,6 @@ class DataLeadsController extends Controller
 
         // Excel::import(new DataLeadsImport($tanggal_awal, $tanggal_akhir, $kcu), $file);
 
-        
-
         $request->session()->flash('success', 'Data Leads berhasil ditambahkan');
         return redirect(route('dataleads.index'));
     } catch (\Exception $e) {

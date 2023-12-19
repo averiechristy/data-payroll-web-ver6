@@ -455,7 +455,11 @@
          
   <canvas id="myChart"></canvas>
 
+
             </div>
+          <small class="text-danger">
+            Minggu di bagi dalam kelipatan 7
+          </small>
         </div>
     </div>
 
@@ -718,6 +722,9 @@
   <canvas id="myChartStatus"></canvas>
 
             </div>
+            <small class="text-danger">
+            Minggu di bagi dalam kelipatan 7
+          </small>
         </div>
     </div>
     </div>
@@ -753,7 +760,13 @@ var closingData = monthlyData.map(function (data) {
     return data.totalClosing;
 });
 
+var notcallData = labels.map(function (week) {
+        return weeklyData[week.replace('Week ', '')].totalNotCall;
+    });
 
+    var uncontactedData = labels.map(function (week) {
+        return weeklyData[week.replace('Week ', '')].totalUnContacted;
+    });
 
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -778,7 +791,21 @@ var myChart = new Chart(ctx, {
             backgroundColor: '#4BC0C0',
             borderWidth: 1,
             barThickness: 10,
-        }]
+        },{
+                label: 'Not Call Yet',
+                data: notcallData,
+                backgroundColor: '#9966FF',
+                borderWidth: 1,
+                barThickness: 10,
+            },
+            {
+                label: 'UnContacted',
+                data: uncontactedData,
+                backgroundColor: '#FF6384',
+                borderWidth: 1,
+                barThickness: 10,
+            }
+    ]
     },
     options: {
         scales: {
@@ -810,6 +837,14 @@ var myChart = new Chart(ctx, {
         return weeklyData[week.replace('Week ', '')].totalClosing;
     });
 
+    var notcallData = labels.map(function (week) {
+        return weeklyData[week.replace('Week ', '')].totalNotCall;
+    });
+
+    var uncontactedData = labels.map(function (week) {
+        return weeklyData[week.replace('Week ', '')].totalUnContacted;
+    });
+
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'bar',
@@ -819,20 +854,34 @@ var myChart = new Chart(ctx, {
                 label: 'Contacted',
                 data: contactedData,
                 backgroundColor: '#36A2EB',
-                barThickness: 50,
+                barThickness: 10,
                 borderWidth: 1,
             }, {
                 label: 'Interested',
                 data: interestedData,
                 backgroundColor: '#FF9F40',
                 borderWidth: 1,
-                barThickness: 50,
+                barThickness: 10,
             }, {
                 label: 'Closing',
                 data: closingData,
                 backgroundColor: '#4BC0C0',
                 borderWidth: 1,
-                barThickness: 50,
+                barThickness: 10,
+            },
+            {
+                label: 'Not Call Yet',
+                data: notcallData,
+                backgroundColor: '#9966FF',
+                borderWidth: 1,
+                barThickness: 10,
+            },
+            {
+                label: 'UnContacted',
+                data: uncontactedData,
+                backgroundColor: '#FF6384',
+                borderWidth: 1,
+                barThickness: 10,
             }]
         },
         options: {
@@ -2077,7 +2126,7 @@ $(function() {
 
 <script>
     
-</script>
+</script> 
 
 <script>
     document.getElementById('exportPdfButton').addEventListener('click', function() {
@@ -2108,7 +2157,7 @@ $(function() {
         // Set options for html2pdf
         var options = {
             margin: [5, 5, 5, 5], // Adjust margins as needed (top, left, bottom, right)     
-            filename: 'chart_export_by_step_status.pdf',
+            filename: 'chart_export_by_status.pdf',
             image: { type: 'jpeg', quality: 0.98 }, // Set image quality
             html2canvas: { scale: 3 }, // Adjust scale as needed
             jsPDF: { unit: 'mm', format: 'A3', orientation: 'landscape' } // Adjust format and orientation as needed

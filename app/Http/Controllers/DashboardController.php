@@ -160,25 +160,13 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
     $endOfMonth = $today->endOfMonth();
     $currentWeekStart = $today->copy()->startOfMonth();  
     $weekCount = 0;
+   
     
     while ($currentWeekStart->lte($endOfMonth)) {
-        $currentWeekEnd = $currentWeekStart->copy()->addDays(6)->endOfDay(); // Akhir minggu adalah 9 hari setelah awal minggu
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
     
-        // Check if the week contains the 22nd day
-        $contains22ndDay = $currentWeekStart->lte($today) && $currentWeekEnd->gte($today->copy()->setDay(22));
     
-        if ($contains22ndDay) {
-            $currentWeekEnd = $endOfMonth;
-        } elseif ($currentWeekEnd->gt($endOfMonth)) {
-            $currentWeekEnd = $endOfMonth;
-        }
-    
-        $weekCount++;
-    
-        // Check if it's beyond the 4th week, and if so, break out of the loop
-        if ($weekCount > 4) {
-            break;
-        }
     
         $weeklyData[] = [
             'start_date' => $currentWeekStart->toDateString(),
@@ -193,40 +181,38 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
                 ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
                 ->count(),
 
+                'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+
+                'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
         ];
     
-        $currentWeekStart->addDays(7); // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
-    }
+        $currentWeekStart->addDays(7); // Move to the next week
+    
+        // Stop the loop if the current week exceeds the end of the month
+        if ($currentWeekStart->gt($endOfMonth)) {
+            break;
+        }    }
     
     // Modifikasi indeks array
     $weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
 
-
+  
     $weeklyDataStatus = [];
 
     $today = Carbon::now();
     $endOfMonth = $today->endOfMonth();
     $currentWeekStart = $today->copy()->startOfMonth();  
     $weekCount = 0;
-    
+
     while ($currentWeekStart->lte($endOfMonth)) {
-        $currentWeekEnd = $currentWeekStart->copy()->addDays(6)->endOfDay(); // Akhir minggu adalah 9 hari setelah awal minggu
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
     
-        // Check if the week contains the 22nd day
-        $contains22ndDay = $currentWeekStart->lte($today) && $currentWeekEnd->gte($today->copy()->setDay(22));
-    
-        if ($contains22ndDay) {
-            $currentWeekEnd = $endOfMonth;
-        } elseif ($currentWeekEnd->gt($endOfMonth)) {
-            $currentWeekEnd = $endOfMonth;
-        }
-    
-        $weekCount++;
-    
-        // Check if it's beyond the 4th week, and if so, break out of the loop
-        if ($weekCount > 4) {
-            break;
-        }
+      
     
         $weeklyDataStatus[] = [
             'start_date' => $currentWeekStart->toDateString(),
@@ -253,13 +239,16 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
                 ->count(),
 
         ];
+        $currentWeekStart->addDays(7); // Move to the next week
     
-        $currentWeekStart->addDays(7); // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
+        // Stop the loop if the current week exceeds the end of the month
+        if ($currentWeekStart->gt($endOfMonth)) {
+            break;
+        } // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
     }
     
     // Modifikasi indeks array
     $weeklyDataStatus = array_combine(range(1, count($weeklyDataStatus)), array_values($weeklyDataStatus));
-    
    
    
 
@@ -411,7 +400,7 @@ public function filterdata(Request $request)
         $totalBerminatPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->whereIn('status', ['Berminat',  'Diskusi Internal'])->count();
     }
 
-    
+   
    
 
     $totalContactedPerKCU = [];
@@ -544,6 +533,27 @@ if ($isOneYearRange) {
                 ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
                 ->count(),
             'totalClosing' => DataLeads::where('status', 'Closing')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+                'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+
+                'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
                 ->when($selectedKCU, function ($query) use ($selectedKCU) {
                     return $query->where('kcu', $selectedKCU);
                 })
@@ -701,94 +711,97 @@ session()->put('tanggalAkhir', $tanggalakhir);
 
 else {
 
-$weeklyData = [];
-$weekCount = 0;
-while ($currentWeekStart->lte($endOfMonth)) {
-    $currentWeekEnd = $currentWeekStart->copy()->addDays(6)->endOfDay(); // Akhir minggu adalah 9 hari setelah awal minggu
+    
+    $weeklyData = [];
+    $weekCount = 0;
+    
+    while ($currentWeekStart->lte($endOfMonth)) {
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+    
+        $weeklyData[] = [
+            'start_date' => $currentWeekStart->toDateString(),
+            'end_date' => $currentWeekEnd->toDateString(),
+            'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal'])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+    
+            'totalContacted' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+    
+            'totalClosing' => DataLeads::where('status', 'Closing')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
 
-    // Check if the week contains the 22nd day
-    $contains22ndDay = $currentWeekStart->lte($today) && $currentWeekEnd->gte($today->copy()->setDay(22));
-
-    if ($contains22ndDay) {
-        $currentWeekEnd = $endOfMonth;
-    } elseif ($currentWeekEnd->gt($endOfMonth)) {
-        $currentWeekEnd = $endOfMonth;
-    }
-
-    $weekCount++;
-
-    // Check if it's beyond the 4th week, and if so, break out of the loop
-    if ($weekCount > 4) {
-        break;
-    }
-
-    $weeklyData[] = [
-        'start_date' => $currentWeekStart->toDateString(),
-        'end_date' => $currentWeekEnd->toDateString(),
-       'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal']) 
-       ->when($selectedKCU, function ($query) use ($selectedKCU) {
-        return $query->where('kcu', $selectedKCU);
-    })
-    ->when($selectedJenis, function ($query) use ($selectedJenis) {
-        return $query->where('jenis_data', $selectedJenis);
-    })
-    ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
-    ->count(),
-
-        'totalContacted' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
-        ->when($selectedKCU, function ($query) use ($selectedKCU) {
-            return $query->where('kcu', $selectedKCU);
-        })
-        ->when($selectedJenis, function ($query) use ($selectedJenis) {
-            return $query->where('jenis_data', $selectedJenis);
-        })
-        ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
-        ->count(),
-        'totalClosing' => DataLeads::where('status', 'Closing')
-        ->when($selectedKCU, function ($query) use ($selectedKCU) {
-            return $query->where('kcu', $selectedKCU);
-        })
-        ->when($selectedJenis, function ($query) use ($selectedJenis) {
-            return $query->where('jenis_data', $selectedJenis);
-        })
-        ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
-        ->count(),
+                
+            'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+            ->count(),
 
             
-    ];
-
-    $currentWeekStart->addDays(7); // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
-}
-
-// Modifikasi indeks array
-$weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
-
+            'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+        ];
+    
+        $currentWeekStart->addDays(7); // Move to the next week
+    
+        // Stop the loop if the current week exceeds the end of the month
+        if ($currentWeekStart->gt($endOfMonth)) {
+            break;
+        }
+    }
+    
+    // Modify array indices
+    $weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
+    
+    
 
 $weeklyDataStatus = [];
 
-$today = Carbon::now();
-$endOfMonth = $today->endOfMonth();
-$currentWeekStart = $today->copy()->startOfMonth();  
+
+$endOfMonth = Carbon::parse($tanggalakhir)->endOfMonth();
+$currentWeekStart = Carbon::parse($tanggalawal)->startOfMonth(); 
+
 $weekCount = 0;
 
+
+
 while ($currentWeekStart->lte($endOfMonth)) {
-    $currentWeekEnd = $currentWeekStart->copy()->addDays(6)->endOfDay(); // Akhir minggu adalah 9 hari setelah awal minggu
+    // Calculate the end of the week, but ensure it does not go beyond the end of the month
+    $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
 
-    // Check if the week contains the 22nd day
-    $contains22ndDay = $currentWeekStart->lte($today) && $currentWeekEnd->gte($today->copy()->setDay(22));
-
-    if ($contains22ndDay) {
-        $currentWeekEnd = $endOfMonth;
-    } elseif ($currentWeekEnd->gt($endOfMonth)) {
-        $currentWeekEnd = $endOfMonth;
-    }
-
-    $weekCount++;
-
-    // Check if it's beyond the 4th week, and if so, break out of the loop
-    if ($weekCount > 4) {
-        break;
-    }
 
     $weeklyDataStatus[] = [
         'start_date' => $currentWeekStart->toDateString(),
@@ -855,12 +868,15 @@ while ($currentWeekStart->lte($endOfMonth)) {
 
     ];
 
-    $currentWeekStart->addDays(7); // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
-}
+    $currentWeekStart->addDays(7); // Move to the next week
+    
+    // Stop the loop if the current week exceeds the end of the month
+    if ($currentWeekStart->gt($endOfMonth)) {
+        break;
+    }}
 
 // Modifikasi indeks array
 $weeklyDataStatus = array_combine(range(1, count($weeklyDataStatus)), array_values($weeklyDataStatus));
-
 
 
 session()->put('selectedJenis', $selectedJenis);

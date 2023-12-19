@@ -7,7 +7,7 @@
                             <div class="col-8 offset-2">
                                 <div class="card mt-3">
                                     <div class="card-header">
-                                        Tambahkan KCU Baru
+                                        Edit Nama
                                     </div>
                                     <div class="card-body">
                                        <form name="saveform" action="/rename/{{$data->id}}" method="post" onsubmit="return validateForm()">
@@ -20,11 +20,6 @@
                         <input type="text" class="form-control" name="new_name" value="{{$data->cust_name}}" required>
                     </div>  
 
-
-                                             
-
-                                          
-
                                             <div class="form-group mb-4">
                                                 <button type="submit" class="btn " style="background-color: #01004C; color: white;">Simpan</button>
                                             </div>
@@ -34,23 +29,16 @@
                             </div>
                         </div>
                     </div>
-
-
                 <!-- /.container-fluid -->
-
             </div>
             <!-- End of Main Content -->
-
             <!-- Footer -->
-          
             <!-- End of Footer -->
-
         </div>
         <!-- End of Content Wrapper -->
-
     </div>
 
-
+    
     <script>
 
 function validateForm() {
