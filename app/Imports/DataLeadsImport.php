@@ -96,6 +96,7 @@ class DataLeadsImport implements ToCollection, WithHeadingRow
             'kcu' => $this->kcu,
             'jenis_data' => 'Data Leads',
             'status' => 'Belum Dikerjakan',
+            'data_tanggal' => $this->tanggal_akhir,
             
             
         ]);

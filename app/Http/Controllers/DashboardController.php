@@ -156,15 +156,25 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
        
     $weeklyData = [];
 
+    $weeklyData = [];
+
     $today = Carbon::now();
-    $endOfMonth = $today->endOfMonth();
-    $currentWeekStart = $today->copy()->startOfMonth();  
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
+    
     $weekCount = 0;
    
     
     while ($currentWeekStart->lte($endOfMonth)) {
         // Calculate the end of the week, but ensure it does not go beyond the end of the month
-        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
     
     
     
@@ -190,29 +200,38 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
                 ->count(),
         ];
     
-        $currentWeekStart->addDays(7); // Move to the next week
-    
+        $currentWeekStart->addWeek();     
         // Stop the loop if the current week exceeds the end of the month
-        if ($currentWeekStart->gt($endOfMonth)) {
-            break;
-        }    }
+        // if ($currentWeekStart->gt($endOfMonth)) {
+        //     break;
+        // }    
+    }
     
     // Modifikasi indeks array
     $weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
 
+    
   
     $weeklyDataStatus = [];
 
+ 
     $today = Carbon::now();
-    $endOfMonth = $today->endOfMonth();
-    $currentWeekStart = $today->copy()->startOfMonth();  
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
     $weekCount = 0;
 
     while ($currentWeekStart->lte($endOfMonth)) {
         // Calculate the end of the week, but ensure it does not go beyond the end of the month
-        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
     
-      
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
+
     
         $weeklyDataStatus[] = [
             'start_date' => $currentWeekStart->toDateString(),
@@ -239,17 +258,18 @@ $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgai
                 ->count(),
 
         ];
-        $currentWeekStart->addDays(7); // Move to the next week
+        // $currentWeekStart->addDays(7); // Move to the next week
+
+        $currentWeekStart->addWeek();     
     
         // Stop the loop if the current week exceeds the end of the month
-        if ($currentWeekStart->gt($endOfMonth)) {
-            break;
-        } // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
+        // if ($currentWeekStart->gt($endOfMonth)) {
+        //     break;
+        // } // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
     }
     
     // Modifikasi indeks array
     $weeklyDataStatus = array_combine(range(1, count($weeklyDataStatus)), array_values($weeklyDataStatus));
-   
    
 
     return view('dashboard', [
@@ -345,28 +365,42 @@ public function filterdata(Request $request)
             $dataleads = DataLeads::where('data_tanggal', '>=', $tanggalawal)
                 ->where('data_tanggal', '<=', $tanggalakhir);
         
-            $startOfMonth = Carbon::parse($tanggalawal)->startOfMonth();
-                       
-            $endOfMonth = Carbon::parse($tanggalakhir)->endOfMonth();
-        
-            // Check if the selected date range is exactly one year          
-        
-            // If the selected date range is not one year, continue with the weekly data calculation
-            $currentWeekStart = Carbon::parse($tanggalawal)->startOfMonth();            
+                $startOfMonth = Carbon::parse($tanggalawal)->startOfMonth();
+                $endOfMonth = Carbon::parse($tanggalakhir)->endOfMonth();
             
-            // $currentWeekEnd = Carbon::parse($tanggalakhir)->endOfMonth()->endOfWeek();
+            
+                // Check if the selected date range is exactly one year
+            
+                // If the selected date range is not one year, continue with the weekly data calculation
+                
+                // Ambil bulan dari tanggalawal dan kemudian hitung awal minggu dari bulan tersebut
+                $currentMonthStart = Carbon::parse($tanggalawal)->startOfMonth();
+           
+            
+                // Mengambil awal minggu dari bulan
+                $currentWeekStart = $currentMonthStart->startOfWeek();
+                
+                
+                
         
             // ...
         } else {
         
             // Jika salah satu atau kedua tanggal tidak diisi, tetap gunakan filter tanggal bulan ini
-            $today = Carbon::now();
-            $startOfMonth = $today->startOfMonth();
-            $endOfMonth = $today->copy()->endOfMonth();
+            // $today = Carbon::now();
+            // $startOfMonth = $today->startOfMonth();
+            // $endOfMonth = $today->copy()->endOfMonth();
 
-            $today = Carbon::now();
-            $endOfMonth = $today->endOfMonth();
-            $currentWeekStart = $today->copy()->startOfMonth();  
+            // $today = Carbon::now();
+            // $endOfMonth = $today->endOfMonth();
+            // $currentWeekStart = $today->copy()->startOfMonth();  
+
+            
+    $today = Carbon::now();
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
         
             $dataleads = DataLeads::where('tanggal_awal', '>=', $startOfMonth)
                 ->where('tanggal_awal', '<=', $endOfMonth);
@@ -420,6 +454,8 @@ public function filterdata(Request $request)
         $totalUnContactedPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->whereIn('status',['Tidak Terhubung', 'No. Telp Tidak Valid'])->count();
     }
 
+    
+
     $totalNotCallPerKCU = [];
     foreach ($kcu as $item) {
         $totalNotCallPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->where('status','Belum Dikerjakan')->count();
@@ -463,6 +499,7 @@ public function filterdata(Request $request)
     
 
     $totalBerminat = $dataleads->whereIn('status', ['Berminat', 'Diskusi Internal'])->count();
+    
 
 $persentaseBerminat = $dataleads->count() > 0 ? number_format(($totalBerminat / $dataleads->count()) * 100, 1) : 0;
 
@@ -479,13 +516,15 @@ $totalNotCall = $dataleads->where('status', 'Belum Dikerjakan')->count();
 
     $persentaseNotCall = $dataleads->count() > 0 ? number_format(($totalNotCall / $dataleads->count()) * 100, 1) : 0;
 
-    $totalUnContacted = $dataleads->where('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])->count();
+    $totalUnContacted = $dataleads->whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])->count();
+    
 $persentaseUnContacted =  $dataleads->count() > 0 ? number_format(($totalUnContacted / $dataleads->count()) * 100, 1) : 0;
 
 $Berminat = $dataleads->where('status', 'Berminat')->count();
 $TidakBerminat = $dataleads->where('status', 'Tidak Berminat')->count();
 $TidakTerhubung = $dataleads->where('status', 'Tidak Terhubung')->count();
 $NoTelpTidakValid = $dataleads->where('status', 'No. Telp Tidak Valid')->count();
+
 $DiskusiInternal = $dataleads->where('status', 'Diskusi Internal')->count();
 $CallAgain = $dataleads->where('status', 'Call Again')->count();
 
@@ -498,8 +537,218 @@ $persentaseStatusDiskusiInternal =  $dataleads->count() > 0 ? number_format(($Di
 $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgain / $dataleads->count()) * 100, 1) : 0;
        
 $isOneYearRange = Carbon::parse($tanggalawal)->diffInMonths($endOfMonth) === 11;
-        
-if ($isOneYearRange) {
+
+$isOneMonthRange = (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 29) || (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 30)|| (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 31);
+   
+
+$istwomonthrange = Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) >= 59 && Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) <= 62;
+
+
+if ($istwomonthrange) {
+    $twomonthdata = [];
+    $currentMonthStart = Carbon::parse($tanggalawal)->startOfMonth();
+   
+
+    while ($currentMonthStart->lt($endOfMonth)) { 
+        $currentMonthEnd = $currentMonthStart->copy()->endOfMonth();
+        // Change condition to include end month
+        $monthName = $currentMonthStart->format('F');
+
+        $twomonthdata[$monthName] = [
+            'monthName' => $monthName,
+            'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal'])
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+            ->count(),
+        'totalContacted' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+            ->count(),
+        'totalClosing' => DataLeads::where('status', 'Closing')
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+            ->count(),
+
+            'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+            ->count(),
+
+
+            'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
+            ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                return $query->where('kcu', $selectedKCU);
+            })
+            ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                return $query->where('jenis_data', $selectedJenis);
+            })
+            ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+            ->count(),
+
+        ];
+
+        $currentMonthStart->addMonth();
+    }
+    $twomonthdata = array_values($twomonthdata);
+
+
+    $twomonthdataStatus = [];
+    $currentMonthStart = Carbon::parse($tanggalawal)->startOfMonth();
+   
+
+    while ($currentMonthStart->lt($endOfMonth)) { 
+        $currentMonthEnd = $currentMonthStart->copy()->endOfMonth();
+        // Change condition to include end month
+        $monthName = $currentMonthStart->format('F');
+        $twomonthdataStatus[$monthName]  = [
+            'monthName'=> $monthName,
+           'Berminat' => DataLeads::where('status', 'Berminat')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+          
+                'TidakBerminat' => DataLeads::where('status', 'Tidak Berminat')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+                'TidakTerhubung' => DataLeads::where('status', 'Tidak Terhubung')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+                'NoTelpTidakValid' => DataLeads::where('status', 'No. Telp Tidak Valid')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+                'DiskusiInternal' => DataLeads::where('status', 'Diskusi Internal')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+
+                'CallAgain' => DataLeads::where('status', 'Call Again')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentMonthStart, $currentMonthEnd])
+                ->count(),
+        ];
+    
+
+        $currentMonthStart->addMonth();
+    }
+
+    $twomonthdataStatus = array_values($twomonthdataStatus);
+
+
+    session()->put('selectedJenis', $selectedJenis);
+    session()->put('selectedKCU', $selectedKCU);
+    session()->put('tanggalAwal', $tanggalawal);
+    session()->put('tanggalAkhir', $tanggalakhir);
+        return view('dashboard', [
+            'dataleads' => $dataleads,
+            'kcu' => $kcu,
+            'twomonthdata' => $twomonthdata,
+            'persentaseBerminat' => $persentaseBerminat,
+            'persentaseContacted' => $persentaseContacted,
+            'persentaseClosing' => $persentaseClosing,
+            'totalBerminatPerKCU' => $totalBerminatPerKCU,
+            'totalContactedPerKCU' => $totalContactedPerKCU,
+            'totalClosingPerKCU' => $totalClosingPerKCU,
+            'dtkcu' => $dtkcu,
+            'selectedKCU' =>$selectedKCU,
+            'dataKCU' => $dataKCU,
+            'selectedJenis' => $selectedJenis,
+            'tanggalAwal' => $tanggalawal,
+            'tanggalAkhir' => $tanggalakhir,
+            'totalClosing' => $totalClosing,
+            'Berminat' => $Berminat,
+             'TidakBerminat' => $TidakBerminat,
+             'TidakTerhubung' => $TidakTerhubung,
+             'NoTelpTidakValid' => $NoTelpTidakValid,
+             'DiskusiInternal' => $DiskusiInternal,
+             'CallAgain' => $CallAgain,
+            'persentaseStatusBerminat' =>$persentaseStatusBerminat,
+            'persentaseStatusCallAgain' => $persentaseStatusCallAgain,
+             'persentaseStatusDiskusiInternal'=> $persentaseStatusDiskusiInternal,
+            'persentaseStatusNoTelpTidakValid' =>$persentaseStatusNoTelpTidakValid,
+            'persentaseStatusTidakBerminat'=> $persentaseStatusTidakBerminat,
+            'persentaseStatusTidakTerhubung'=>$persentaseStatusTidakTerhubung,
+            'totalBerminat' => $totalBerminat,
+            'totalNotCall' => $totalNotCall,
+            'totalContacted' => $totalContacted,
+            'persentaseNotCall' =>  $persentaseNotCall,
+            'totalUnContacted' => $totalUnContacted,
+            'persentaseUnContacted' => $persentaseUnContacted,
+            'totalUnContactedPerKCU' => $totalUnContactedPerKCU,
+            'totalNotCallPerKCU' => $totalNotCallPerKCU,
+            'twomonthdataStatus' =>$twomonthdataStatus,
+
+         
+            'totalStatusBerminatPerKCU' => $totalStatusBerminatPerKCU,
+            'totalStatusTidakBerminatPerKCU' => $totalStatusTidakBerminatPerKCU,
+            'totalStatusTidakTerhubungPerKCU' => $totalStatusTidakTerhubungPerKCU,
+            'totalStatusNoTelpTidakValidPerKCU' => $totalStatusNoTelpTidakValidPerKCU,
+            'totalStatusDiskusiInternalPerKCU' => $totalStatusDiskusiInternalPerKCU,
+            'totalStatusCallAgainPerKCU' => $totalStatusCallAgainPerKCU,
+         
+            
+        ]);
+
+}
+
+
+
+elseif ($isOneYearRange) {
 
     $selectedKCU = $request->input('kcu');
     $selectedJenis = $request->input('jenis_data');
@@ -508,6 +757,8 @@ if ($isOneYearRange) {
 
     $currentMonthStart = Carbon::parse($tanggalawal)->startOfMonth();
     $currentMonthEnd = $currentMonthStart->copy()->endOfMonth();
+
+   
 
     while ($currentMonthStart->lte($endOfMonth)) {
         $monthName = $currentMonthStart->format('F'); // Ambil nama bulan
@@ -708,20 +959,28 @@ session()->put('tanggalAkhir', $tanggalakhir);
     ]);
     
 }
-
-else {
-
-    
+elseif ($isOneMonthRange) {    
     $weeklyData = [];
     $weekCount = 0;
+
+    
+    
     
     while ($currentWeekStart->lte($endOfMonth)) {
         // Calculate the end of the week, but ensure it does not go beyond the end of the month
-        $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
+
     
+        
         $weeklyData[] = [
-            'start_date' => $currentWeekStart->toDateString(),
-            'end_date' => $currentWeekEnd->toDateString(),
+            'start_date' => $currentWeekStart->format('d / m / y'),
+            'end_date' => $currentWeekEnd->format('d / m / y'),
+            
             'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal'])
                 ->when($selectedKCU, function ($query) use ($selectedKCU) {
                     return $query->where('kcu', $selectedKCU);
@@ -775,24 +1034,33 @@ else {
                 ->count(),
         ];
     
-        $currentWeekStart->addDays(7); // Move to the next week
-    
-        // Stop the loop if the current week exceeds the end of the month
-        if ($currentWeekStart->gt($endOfMonth)) {
-            break;
-        }
+
+        $currentWeekStart->addWeek();    
+       
     }
     
     // Modify array indices
     $weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
     
-    
 
 $weeklyDataStatus = [];
 
 
+$startOfMonth = Carbon::parse($tanggalawal)->startOfMonth();
 $endOfMonth = Carbon::parse($tanggalakhir)->endOfMonth();
-$currentWeekStart = Carbon::parse($tanggalawal)->startOfMonth(); 
+
+
+// Check if the selected date range is exactly one year
+
+// If the selected date range is not one year, continue with the weekly data calculation
+
+// Ambil bulan dari tanggalawal dan kemudian hitung awal minggu dari bulan tersebut
+$currentMonthStart = Carbon::parse($tanggalawal)->startOfMonth();
+
+
+// Mengambil awal minggu dari bulan
+$currentWeekStart = $currentMonthStart->startOfWeek();
+
 
 $weekCount = 0;
 
@@ -800,12 +1068,18 @@ $weekCount = 0;
 
 while ($currentWeekStart->lte($endOfMonth)) {
     // Calculate the end of the week, but ensure it does not go beyond the end of the month
-    $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+    // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
 
+    $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+
+    if ($currentWeekEnd->gt($endOfMonth)) {
+        // If yes, set the end of the week to the end of the month
+        $currentWeekEnd = $endOfMonth;
+    }
 
     $weeklyDataStatus[] = [
-        'start_date' => $currentWeekStart->toDateString(),
-        'end_date' => $currentWeekEnd->toDateString(),
+        'start_date' => $currentWeekStart->format('d / m / y'),
+        'end_date' => $currentWeekEnd->format('d / m / y'),
         'Berminat' => DataLeads::where('status', 'Berminat')
         ->when($selectedKCU, function ($query) use ($selectedKCU) {
             return $query->where('kcu', $selectedKCU);
@@ -868,12 +1142,12 @@ while ($currentWeekStart->lte($endOfMonth)) {
 
     ];
 
-    $currentWeekStart->addDays(7); // Move to the next week
-    
+    $currentWeekStart->addWeek();     
     // Stop the loop if the current week exceeds the end of the month
-    if ($currentWeekStart->gt($endOfMonth)) {
-        break;
-    }}
+    // if ($currentWeekStart->gt($endOfMonth)) {
+    //     break;
+    // }
+}
 
 // Modifikasi indeks array
 $weeklyDataStatus = array_combine(range(1, count($weeklyDataStatus)), array_values($weeklyDataStatus));
@@ -932,6 +1206,190 @@ return view('dashboard', [
  
     
 ]);
+
+}
+else {
+
+    $overallTotals = [
+        'start_date' => Carbon::parse($tanggalawal)->format('d / m / Y'),
+        'end_date' => Carbon::parse($tanggalakhir)->format('d / m / Y'),
+        'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal'])
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir])
+        ->count(),
+
+    'totalContacted' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir])
+        ->count(),
+
+    'totalClosing' => DataLeads::where('status', 'Closing')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir])
+        ->count(),
+
+        
+    'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+    ->when($selectedKCU, function ($query) use ($selectedKCU) {
+        return $query->where('kcu', $selectedKCU);
+    })
+    ->when($selectedJenis, function ($query) use ($selectedJenis) {
+        return $query->where('jenis_data', $selectedJenis);
+    })
+    ->whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir])
+    ->count(),
+
+    
+    'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir])
+        ->count(),
+        // Add other total calculations here
+    ];
+
+    $overallTotalsStatus = [
+        'start_date' =>Carbon::parse($tanggalawal)->format('d / m / y'),
+        'end_date' => Carbon::parse($tanggalakhir)->format('d / m / y'),
+       
+        'Berminat' => DataLeads::where('status', 'Berminat')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+  
+        'TidakBerminat' => DataLeads::where('status', 'Tidak Berminat')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+
+        'TidakTerhubung' => DataLeads::where('status', 'Tidak Terhubung')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+
+        'NoTelpTidakValid' => DataLeads::where('status', 'No. Telp Tidak Valid')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+
+        'DiskusiInternal' => DataLeads::where('status', 'Diskusi Internal')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+
+        'CallAgain' => DataLeads::where('status', 'Call Again')
+        ->when($selectedKCU, function ($query) use ($selectedKCU) {
+            return $query->where('kcu', $selectedKCU);
+        })
+        ->when($selectedJenis, function ($query) use ($selectedJenis) {
+            return $query->where('jenis_data', $selectedJenis);
+        })
+        ->whereBetween('data_tanggal',[$tanggalawal, $tanggalakhir])
+        ->count(),
+
+    ];
+
+    
+session()->put('selectedJenis', $selectedJenis);
+session()->put('selectedKCU', $selectedKCU);
+session()->put('tanggalAwal', $tanggalawal);
+session()->put('tanggalAkhir', $tanggalakhir);
+return view('dashboard', [
+    'dataleads' => $dataleads,
+    'kcu' => $kcu,
+   
+    'persentaseBerminat' => $persentaseBerminat,
+    'persentaseContacted' => $persentaseContacted,
+    'persentaseClosing' => $persentaseClosing,
+    'totalBerminatPerKCU' => $totalBerminatPerKCU,
+    'totalContactedPerKCU' => $totalContactedPerKCU,
+    'totalClosingPerKCU' => $totalClosingPerKCU,
+    'dtkcu' => $dtkcu,
+    'selectedKCU' =>$selectedKCU,
+    'dataKCU' => $dataKCU,
+    'selectedJenis' => $selectedJenis,
+    'tanggalAwal' => $tanggalawal,
+    'tanggalAkhir' => $tanggalakhir,
+    'totalClosing' => $totalClosing,
+    'Berminat' => $Berminat,
+     'TidakBerminat' => $TidakBerminat,
+     'TidakTerhubung' => $TidakTerhubung,
+     'NoTelpTidakValid' => $NoTelpTidakValid,
+     'DiskusiInternal' => $DiskusiInternal,
+     'CallAgain' => $CallAgain,
+    'persentaseStatusBerminat' =>$persentaseStatusBerminat,
+    'persentaseStatusCallAgain' => $persentaseStatusCallAgain,
+     'persentaseStatusDiskusiInternal'=> $persentaseStatusDiskusiInternal,
+    'persentaseStatusNoTelpTidakValid' =>$persentaseStatusNoTelpTidakValid,
+    'persentaseStatusTidakBerminat'=> $persentaseStatusTidakBerminat,
+    'persentaseStatusTidakTerhubung'=>$persentaseStatusTidakTerhubung,
+    'totalBerminat' => $totalBerminat,
+    'totalNotCall' => $totalNotCall,
+    'totalContacted' => $totalContacted,
+    'persentaseNotCall' =>  $persentaseNotCall,
+    'totalUnContacted' => $totalUnContacted,
+    'persentaseUnContacted' => $persentaseUnContacted,
+    'totalUnContactedPerKCU' => $totalUnContactedPerKCU,
+    'totalNotCallPerKCU' => $totalNotCallPerKCU,
+    
+    'totalStatusBerminatPerKCU' => $totalStatusBerminatPerKCU,
+    'totalStatusTidakBerminatPerKCU' => $totalStatusTidakBerminatPerKCU,
+    'totalStatusTidakTerhubungPerKCU' => $totalStatusTidakTerhubungPerKCU,
+    'totalStatusNoTelpTidakValidPerKCU' => $totalStatusNoTelpTidakValidPerKCU,
+    'totalStatusDiskusiInternalPerKCU' => $totalStatusDiskusiInternalPerKCU,
+    'totalStatusCallAgainPerKCU' => $totalStatusCallAgainPerKCU,
+
+
+    'overallTotals' => $overallTotals,
+    'overallTotalsStatus' => $overallTotalsStatus, 
+    
+]);
+
+
 
 }
 

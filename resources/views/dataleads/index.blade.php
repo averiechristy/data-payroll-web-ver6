@@ -114,7 +114,7 @@ entries
 
 
                        
-                          
+<div class="table-responsive">
                                 <table  class="table table-bordered"  width="100%" cellspacing="0" style="border-radius: 10px;">
                                     <thead>
                                         <tr>

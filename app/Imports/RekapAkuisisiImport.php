@@ -46,7 +46,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                 // Baris kosong, skip pemrosesan
                 continue;
             }
-            
+
             // Check if the customer name exists in the data_leads table
             $existingLeads = DataLeads::where('cust_name', $row['nama_perusahaan'])
             ->where('kcu', $this->kcu) // Menambahkan kondisi untuk memastikan kcu sesuai
@@ -54,6 +54,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
             // ->where('tanggal_akhir', $this->tanggal_akhir_akuisisi)
             ->get();
 
+        
         
             // foreach ($existingLeads as $existingLead) {
 

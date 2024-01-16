@@ -255,7 +255,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-s font-weight-bold text-primary text-uppercase mb-1">
-                        Interested</div>
+                       Total Interested</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalBerminat}} ({{ $persentaseBerminat}} %)</div>
                 </div>
                 
@@ -271,7 +271,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-s font-weight-bold text-success text-uppercase mb-1">
-                        Contacted</div>
+                        Total Contacted</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalContacted}} ({{ $persentaseContacted}} %)</div>
                 </div>
                
@@ -287,7 +287,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-s font-weight-bold text-warning text-uppercase mb-1">
-                        Closing</div>
+                        Total Closing</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalClosing}}({{$persentaseClosing}} %)</div>
                 </div>
               
@@ -308,7 +308,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-s font-weight-bold text-danger text-uppercase mb-1">
-                        Uncontacted</div>
+                       Total Uncontacted</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalUnContacted}} ({{ $persentaseUnContacted}} %)</div>
                 </div>
                 
@@ -324,7 +324,7 @@
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
                     <div class="text-s font-weight-bold text-info text-uppercase mb-1">
-                        Not Call Yet</div>
+                       Total Not Call Yet</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalNotCall}} ({{ $persentaseNotCall}} %)</div>
                 </div>
                
@@ -343,7 +343,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Interested</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Total Interested</h6>
            
         </div>
         <!-- Card Body -->
@@ -361,7 +361,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Contacted</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Total Contacted</h6>
            
         </div>
         <!-- Card Body -->
@@ -381,7 +381,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Closing</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Total Closing</h6>
            
         </div>
         <!-- Card Body -->
@@ -407,7 +407,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Uncontacted</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Total Uncontacted</h6>
            
         </div>
         <!-- Card Body -->
@@ -425,7 +425,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Not Call Yet</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Total Not Call Yet</h6>
            
         </div>
         <!-- Card Body -->
@@ -457,9 +457,9 @@
 
 
             </div>
-          <small class="text-danger">
+          <!-- <small class="text-danger">
             Minggu di bagi dalam kelipatan 7
-          </small>
+          </small> -->
         </div>
     </div>
 
@@ -722,9 +722,9 @@
   <canvas id="myChartStatus"></canvas>
 
             </div>
-            <small class="text-danger">
+            <!-- <small class="text-danger">
             Minggu di bagi dalam kelipatan 7
-          </small>
+          </small> -->
         </div>
     </div>
     </div>
@@ -760,13 +760,18 @@ var closingData = monthlyData.map(function (data) {
     return data.totalClosing;
 });
 
-var notcallData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalNotCall;
-    });
 
-    var uncontactedData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalUnContacted;
-    });
+
+    var notcallData = monthlyData.map(function (data) {
+    return data.totalNotCall;
+});
+
+  
+
+    var uncontactedData = monthlyData.map(function (data) {
+    return data.totalUnContacted;
+});
+
 
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -817,59 +822,63 @@ var myChart = new Chart(ctx, {
         }
     }
 });
-@else
 
-    var weeklyData = @json($weeklyData);
+@elseif(isset($twomonthdata))
+var twomonthdata = @json($twomonthdata);
 
-    var labels = Object.keys(weeklyData).map(function (week) {
-        return 'Week ' + week;
-    });
+var labels = twomonthdata.map(function (data) {
+    return data.monthName;
+});
 
-    var contactedData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalContacted;
-    });
+var contactedData = twomonthdata.map(function (data) {
+    return data.totalContacted;
+});
 
-    var interestedData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalBerminat;
-    });
+var interestedData = twomonthdata.map(function (data) {
+    return data.totalBerminat;
+});
 
-    var closingData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalClosing;
-    });
+var closingData = twomonthdata.map(function (data) {
+    return data.totalClosing;
+});
 
-    var notcallData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalNotCall;
-    });
 
-    var uncontactedData = labels.map(function (week) {
-        return weeklyData[week.replace('Week ', '')].totalUnContacted;
-    });
 
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Contacted',
-                data: contactedData,
-                backgroundColor: '#36A2EB',
-                barThickness: 10,
-                borderWidth: 1,
-            }, {
-                label: 'Interested',
-                data: interestedData,
-                backgroundColor: '#FF9F40',
-                borderWidth: 1,
-                barThickness: 10,
-            }, {
-                label: 'Closing',
-                data: closingData,
-                backgroundColor: '#4BC0C0',
-                borderWidth: 1,
-                barThickness: 10,
-            },
-            {
+    var notcallData = twomonthdata.map(function (data) {
+    return data.totalNotCall;
+});
+
+  
+
+    var uncontactedData = twomonthdata.map(function (data) {
+    return data.totalUnContacted;
+});
+
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Contacted',
+            data: contactedData,
+            backgroundColor: '#36A2EB',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Interested',
+            data: interestedData,
+            backgroundColor: '#FF9F40',
+            borderWidth: 1,
+            barThickness: 10,
+        }, {
+            label: 'Closing',
+            data: closingData,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 10,
+        },{
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
@@ -882,6 +891,92 @@ var myChart = new Chart(ctx, {
                 backgroundColor: '#FF6384',
                 borderWidth: 1,
                 barThickness: 10,
+            }
+    ]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 500,
+                min: 0,
+            }
+        }
+    }
+});
+
+@elseif (isset($weeklyData))
+
+    var weeklyData = @json($weeklyData);
+
+    var labels = Object.keys(weeklyData).map(function (week) {
+  var weekData = weeklyData[week];
+  return `W ${week} (${weekData.start_date} - ${weekData.end_date})`;
+});
+
+var contactedData = labels.map(function (week) {
+  var weekNumber = week.match(/\d+/)[0]; // Mendapatkan nomor minggu dari label
+  return weeklyData[weekNumber].totalContacted;
+});
+
+var interestedData = labels.map(function (week) {
+  var weekNumber = week.match(/\d+/)[0];
+  return weeklyData[weekNumber].totalBerminat;
+});
+
+var closingData = labels.map(function (week) {
+  var weekNumber = week.match(/\d+/)[0];
+  return weeklyData[weekNumber].totalClosing;
+});
+
+var notcallData = labels.map(function (week) {
+  var weekNumber = week.match(/\d+/)[0];
+  return weeklyData[weekNumber].totalNotCall;
+});
+
+var uncontactedData = labels.map(function (week) {
+  var weekNumber = week.match(/\d+/)[0];
+  return weeklyData[weekNumber].totalUnContacted;
+});
+
+
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Contacted',
+                data: contactedData,
+                backgroundColor: '#36A2EB',
+                barThickness: 20,
+                borderWidth: 1,
+            }, {
+                label: 'Interested',
+                data: interestedData,
+                backgroundColor: '#FF9F40',
+                borderWidth: 1,
+                barThickness: 20,
+            }, {
+                label: 'Closing',
+                data: closingData,
+                backgroundColor: '#4BC0C0',
+                borderWidth: 1,
+                barThickness: 20,
+            },
+            {
+                label: 'Not Call Yet',
+                data: notcallData,
+                backgroundColor: '#9966FF',
+                borderWidth: 1,
+                barThickness: 20,
+            },
+            {
+                label: 'UnContacted',
+                data: uncontactedData,
+                backgroundColor: '#FF6384',
+                borderWidth: 1,
+                barThickness: 20,
             }]
         },
         options: {
@@ -895,6 +990,69 @@ var myChart = new Chart(ctx, {
         }
     });
 
+    @else
+
+    var overallTotals = @json($overallTotals);
+    var labels = [overallTotals.start_date + ' to ' + overallTotals.end_date];
+    
+    var datasets = [{
+    label: 'Berminat',
+    data: [overallTotals.totalBerminat],
+    backgroundColor: '#36A2EB',
+    borderWidth: 1,
+    barThickness: 50,
+
+}, {
+    label: 'Contacted',
+    data: [overallTotals.totalContacted],
+    backgroundColor: '#FF9F40',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Closing',
+    data: [overallTotals.totalClosing],
+    backgroundColor: '#4BC0C0',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Not Called',
+    data: [overallTotals.totalNotCall],
+    backgroundColor: '#9966FF',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Uncontacted',
+    data: [overallTotals.totalUnContacted],
+    backgroundColor: '#FF6384',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}];
+
+
+
+var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+        labels: labels,
+        datasets: datasets
+    },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    min: 0,
+                }
+            }
+        }
+    });
+
+    
     @endif
 </script>
 
@@ -1392,47 +1550,49 @@ var myChart = new Chart(ctx, {
         }
     }
 });
-@else
-
-    var weeklyDataStatus = @json($weeklyDataStatus);
-
-    var labels = Object.keys(weeklyDataStatus).map(function (week) {
-        return 'Week ' + week;
-    });
-
-    var Berminat = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].Berminat;
-    });
-
-
-    var TidakBerminat = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].TidakBerminat;
-    });
-
-    var TidakTerhubung = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].TidakTerhubung;
-    });
-
-    var NoTelpTidakValid = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].NoTelpTidakValid;
-    });
-
-    var DiskusiInternal = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].DiskusiInternal;
-    });
-
-    var CallAgain = labels.map(function (week) {
-        return weeklyDataStatus[week.replace('Week ', '')].CallAgain;
-    });
 
 
 
-    var ctx = document.getElementById('myChartStatus').getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
+@elseif(isset($twomonthdataStatus))
+var twomonthdatastatus = @json($twomonthdataStatus);
+
+var labels = twomonthdatastatus.map(function (data) {
+    return data.monthName;
+});
+
+var Berminat = twomonthdatastatus.map(function (data) {
+    return data.Berminat;
+});
+
+
+var TidakBerminat = twomonthdatastatus.map(function (data) {
+    return data.TidakBerminat;
+});
+
+var TidakTerhubung = twomonthdatastatus.map(function (data) {
+    return data.TidakTerhubung;
+});
+
+
+var NoTelpTidakValid = twomonthdatastatus.map(function (data) {
+    return data.NoTelpTidakValid;
+});
+
+var DiskusiInternal = twomonthdatastatus.map(function (data) {
+    return data.DiskusiInternal;
+});
+
+var CallAgain = twomonthdatastatus.map(function (data) {
+    return data.CallAgain;
+});
+
+
+var ctx = document.getElementById('myChartStatus').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
             label: 'Berminat',
             data: Berminat,
             backgroundColor: '#36A2EB',
@@ -1441,7 +1601,7 @@ var myChart = new Chart(ctx, {
         }, {
             label: 'Tidak Berminat',
             data: TidakBerminat,
-            backgroundColor: '#FF6384',
+            backgroundColor: '#FF9F40',
             borderWidth: 1,
             barThickness: 10,
         }, {
@@ -1454,21 +1614,116 @@ var myChart = new Chart(ctx, {
         {
             label: 'No. Telp Tidak Valid',
             data: NoTelpTidakValid,
-            backgroundColor: '#FF9F40',
+            backgroundColor: '#36A2EB',
             barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Diskusi Internal',
+            data: DiskusiInternal,
+            backgroundColor: '#FF9F40',
+            borderWidth: 1,
+            barThickness: 10,
+        }, {
+            label: 'Call Again',
+            data: CallAgain,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 10,
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 500,
+                min: 0,
+            }
+        }
+    }
+});
+@elseif(isset($weeklyDataStatus))
+
+    var weeklyDataStatus = @json($weeklyDataStatus);
+    var labels = Object.keys(weeklyDataStatus).map(function (week) {
+  var weekData = weeklyDataStatus[week];
+  return `W ${week} (${weekData.start_date} - ${weekData.end_date})`;
+});
+
+var Berminat = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].Berminat;
+});
+
+var TidakBerminat = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].TidakBerminat;
+});
+
+var TidakTerhubung = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].TidakTerhubung;
+});
+
+
+var NoTelpTidakValid = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].NoTelpTidakValid;
+});
+
+var DiskusiInternal = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].DiskusiINternal;
+});
+
+var CallAgain = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataStatus[weekNumber].CallAgain;
+});
+
+
+
+    var ctx = document.getElementById('myChartStatus').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+            label: 'Berminat',
+            data: Berminat,
+            backgroundColor: '#36A2EB',
+            barThickness: 20,
+            borderWidth: 1,
+        }, {
+            label: 'Tidak Berminat',
+            data: TidakBerminat,
+            backgroundColor: '#FF6384',
+            borderWidth: 1,
+            barThickness: 20,
+        }, {
+            label: 'Tidak Terhubung',
+            data: TidakTerhubung,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 20,
+        },
+        {
+            label: 'No. Telp Tidak Valid',
+            data: NoTelpTidakValid,
+            backgroundColor: '#FF9F40',
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Diskusi Internal',
             data: DiskusiInternal,
             backgroundColor: '#9966FF',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
             label: 'Call Again',
             data: CallAgain,
             backgroundColor: '#FFCD56',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }]
         },
         options: {
@@ -1482,7 +1737,76 @@ var myChart = new Chart(ctx, {
         }
     });
 
-    @endif
+    @else 
+
+   // Ambil data dari PHP dan inisialisasi chart
+var overallTotalsStatus = <?php echo json_encode($overallTotalsStatus); ?>;
+
+// Ambil label dan data dari overallTotalsStatus
+var labelsStatus = [overallTotalsStatus.start_date + ' to ' + overallTotalsStatus.end_date];
+var datasetsStatus = [{
+    label: 'Berminat',
+    data: [overallTotalsStatus.Berminat],
+    backgroundColor: '#36A2EB',
+    borderWidth: 1,
+                    barThickness: 50,
+
+
+}, {
+    label: 'Tidak Berminat',
+    data: [overallTotalsStatus.TidakBerminat],
+    backgroundColor: '#FF6384',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Tidak Terhubung',
+    data: [overallTotalsStatus.TidakTerhubung],
+    backgroundColor: '#4BC0C0',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'No. Telp Tidak Valid',
+    data: [overallTotalsStatus.NoTelpTidakValid],
+    backgroundColor: '#FF9F40',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Diskusi Internal',
+    data: [overallTotalsStatus.DiskusiInternal],
+    backgroundColor: '#9966FF',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Call Again',
+    data: [overallTotalsStatus.CallAgain],
+    backgroundColor: '#FFCD56',
+    borderWidth: 1,
+                    barThickness: 20,
+
+}];
+
+
+// Inisialisasi chart
+var ctxStatus = document.getElementById('myChartStatus').getContext('2d');
+var myStatusChart = new Chart(ctxStatus, {
+    type: 'bar',
+    data: {
+        labels: labelsStatus,
+        datasets: datasetsStatus
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+   @endif
 </script>
 
 

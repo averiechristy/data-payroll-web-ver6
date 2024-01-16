@@ -43,11 +43,14 @@ class RekapCallImport implements ToCollection, WithHeadingRow
 
         foreach ($rows as $row) {
 
+            
            
             if (empty(array_filter($row->toArray()))) {
                 // Baris kosong, skip pemrosesan
                 continue;
             }
+
+            
     
             $existingLead = DataLeads::where('cust_name', $row['nama_nasabah'])
             ->where('kcu', $this->kcu) // Menambahkan kondisi untuk memastikan kcu sesuai
@@ -55,21 +58,20 @@ class RekapCallImport implements ToCollection, WithHeadingRow
             ->where('tanggal_akhir', $this->tanggal_akhir_call)
             ->first();
 
-        
+          
 
-            
-        
             if ($existingLead) {
                 // Update the existing lead with data from the Excel file
                                 // Pemeriksaan apakah jenis data dan status kosong atau tidak
                     if (!empty($row['status_follow_up'])) {
-                        $validStatusValues = ['Tidak Terhubung', 'Diskusi Internal', 'Berminat', 'Tidak Berminat', 'No. Telp Tidak Valid', 'Call Again', 'Closing']; 
+                        $validStatusValues = ['tidak terhubung', 'diskusi internal', 'berminat', 'tidak berminat', 'no. telp tidak valid', 'call again', 'closing'];
 
-                        // Check if the status value from Excel is not in the valid status values
-                        if (!in_array($row['status_follow_up'], $validStatusValues)) {
+                        $lowercaseStatus = strtolower($row['status_follow_up']);
+                        if (!in_array($lowercaseStatus, $validStatusValues)) {
                             // Jika tidak valid, buat pesan error
                             throw new \Exception("Invalid status value '{$row['status_follow_up']}'.");
                         }
+                        
                     }
 
                     if (!empty($row['data_leads_referral_cabang'])) {
@@ -150,7 +152,10 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                             }
             }
             else {
+                
                 if ($row['data_leads_referral_cabang'] === 'Data Leads') {
+
+
                 $lastNo = DataLeads::max('no');
                 // Menambahkan 1 ke nomor terakhir
                 $newNo = $lastNo + 1;
@@ -240,6 +245,8 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                     }
                 }
             }
+
+
         }
         $existingLeads = DataLeads::whereBetween('tanggal_awal', [$this->tanggal_awal_call, $this->tanggal_akhir_call])
         ->whereBetween('tanggal_akhir', [$this->tanggal_awal_call, $this->tanggal_akhir_call])
@@ -275,50 +282,49 @@ if (!empty($duplicateNames)) {
         ->whereNotIn('cust_name', $importedDataNames)
         ->get();
 
-       
    
       
-        foreach ($existingRecordsWithoutImport as $existingRecord) {
-            // Update the status and data_tanggal in existing records
+        // foreach ($existingRecordsWithoutImport as $existingRecord) {
+        //     // Update the status and data_tanggal in existing records
            
 
-            $updateDataRecord = [
-                'status' => 'Belum Dikerjakan', // Set the desired updated status
-                'data_tanggal' => $this->tanggal_akhir_call, // Set the desired updated data_tanggal
-                'tanggal_follow_up' => null,
-                'nama_pic_kbb' => null,
-            ];
+        //     $updateDataRecord = [
+        //         'status' => 'Belum Dikerjakan', // Set the desired updated status
+        //         'data_tanggal' => $this->tanggal_akhir_call, // Set the desired updated data_tanggal
+        //         'tanggal_follow_up' => null,
+        //         'nama_pic_kbb' => null,
+        //     ];
            
             
-            $existingRecord->update($updateDataRecord);
+        //     $existingRecord->update($updateDataRecord);
             
-            $logDataRecord = [
-                'id_data_leads' =>  $existingRecord->id, // Assuming 'id' is the primary key of DataLeads
-                'jenis_data' => 'Data Leads',
-                'status' => 'Belum Dikerjakan',
+        //     $logDataRecord = [
+        //         'id_data_leads' =>  $existingRecord->id, // Assuming 'id' is the primary key of DataLeads
+        //         'jenis_data' => 'Data Leads',
+        //         'status' => 'Belum Dikerjakan',
                 
-                'kcu' => $this->kcu, 
-                'data_tanggal' => $this->tanggal_akhir_call,
-            ];
+        //         'kcu' => $this->kcu, 
+        //         'data_tanggal' => $this->tanggal_akhir_call,
+        //     ];
            
 
 
-            $existingLog = DataLog::where('id_data_leads',$existingRecord->id)
-                            ->where('data_tanggal', $this->tanggal_akhir_call)
-                            ->where('status', 'Belum Dikerjakan')
-                            ->first();
+        //     $existingLog = DataLog::where('id_data_leads',$existingRecord->id)
+        //                     ->where('data_tanggal', $this->tanggal_akhir_call)
+        //                     ->where('status', 'Belum Dikerjakan')
+        //                     ->first();
 
 
-                            // Check if there is an existing log entry for the same id_data_leads
+        //                     // Check if there is an existing log entry for the same id_data_leads
 
-                            // Check if 'pic_nasabah' is not null in the Excel data
+        //                     // Check if 'pic_nasabah' is not null in the Excel data
                          
                     
-                            if (!$existingLog) {
-                                DataLog::create($logDataRecord);
-                            }
+        //                     if (!$existingLog) {
+        //                         DataLog::create($logDataRecord);
+        //                     }
             
-        }
+        // }
         
 }
     // public function chunkSize(): int
