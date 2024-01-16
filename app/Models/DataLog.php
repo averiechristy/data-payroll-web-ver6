@@ -14,6 +14,7 @@ class DataLog extends Model
         'jenis_data',
         'status',
         'tanggal_follow_up',
+        'status_akuisisi',
         'nama_pic_kbb',
         'kcu',
         'data_tanggal'

@@ -127,6 +127,7 @@ entries
                                           <th>No. Telp</th>
                                           <th>PIC</th>
                                           <th>Status</th>
+                                          <th>Status Akuisisi</th>
                                           <th>KCU</th>
                                           <th>Tanggal Terima Form KBB - Sales</th>
                                           <th>Tanggal Terima Form KBB Payroll - Cabang</th>
@@ -159,8 +160,9 @@ entries
                                   <td>{{$dataleads -> phone_no}}</td>
                                   <td>{{$dataleads -> nama_pic_kbb}}</td>
                                   <td>{{$dataleads -> status}}</td>
+                                  <td>{{$dataleads -> status_akuisisi}}</td>
                                   <td>{{ $dataleads->kcuData->nama_kcu }}</td>
-                                                                    <td>{{$dataleads -> tanggal_terima_form_kbb}}</td>
+                                  <td>{{$dataleads -> tanggal_terima_form_kbb}}</td>
                                   <td>{{$dataleads -> tanggal_terima_form_kbb_payroll}}</td>
                                   <td>{{$dataleads -> jenis_data}}</td>
                                   <td>{{$dataleads -> tanggal_follow_up}}</td>

@@ -164,9 +164,18 @@
 
                         <button id="exportPdfButtonStatus" style="float: right; margin-right:6px;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Download Report by Status</button>
+
+                                <button id="exportPdfButtonAkuisisi" style="float: right; margin-right:6px;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report Akuisisi</button>
                                 </div>
 
+                                
+<br>
+<br>
+<br>
                 <form action="{{ route('filter-data') }}" method="post">
+
+                
     @csrf
 
     @include('components.alert')
@@ -249,7 +258,7 @@
                         <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-4">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -265,7 +274,7 @@
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-4">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -281,7 +290,7 @@
 </div>
 
 <!-- Tasks Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<!-- <div class="col-xl-4 col-md-6 mb-4">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -294,7 +303,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 
 </div>
@@ -338,7 +347,7 @@
 
 <div class="row">
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 mb-4">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
@@ -356,7 +365,7 @@
     </div>
 </div>
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 mb-4">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
@@ -376,15 +385,13 @@
 
 
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<!-- <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Total Closing</h6>
            
         </div>
-        <!-- Card Body -->
         <div class="card-body">
             <div class="chart-pie pt-4 pb-2">
                 <canvas id="myPieChartClosing"></canvas>
@@ -392,7 +399,7 @@
             
         </div>
     </div>
-</div>
+</div> -->
 
 
 
@@ -734,7 +741,226 @@
 
 
     </div>
-    
+
+
+    <br>
+
+    <div id="chartakuisisi">
+    <h5 class="mb-0 text-black-800 mb-3">Data by Akuisisi</h5>
+    <hr>
+
+    <div class="row">
+
+<!-- Earnings (Monthly) Card Example -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-primary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1">
+                       Akuisisi (Closing)</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Akuisisi}} ({{ $persentaseAkuisisi}} %)</div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Earnings (Annual) Card Example -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-success shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-success text-uppercase mb-1">
+                        Reaktivasi</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Reaktivasi}} ({{ $persentaseReaktivasi}} %)</div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Tasks Card Example -->
+<div class="col-xl-4 col-md-6 mb-4">
+    <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1">
+                       Migrasi Limit</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$MigrasiLimit}}({{$persentaseMigrasiLimit}} %)</div>
+                </div>
+              
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+<div class="row">
+
+<!-- Earnings (Monthly) Card Example -->
+<div class="col-xl-6 col-md-6 mb-4">
+    <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1">
+                       Not Ok</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$NotOk}} ({{ $persentaseNotOk}} %)</div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Earnings (Annual) Card Example -->
+<div class="col-xl-6 col-md-6 mb-4">
+    <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-info text-uppercase mb-1">
+                      Waiting Confirmation</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$waitingconfirm}} ({{ $persentasewaitingconfirm}} %)</div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+<div>
+<div class="row">
+<!-- Pie Chart -->
+<div class="col-xl-4 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Akuisisi</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartAkuisisi"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<div class="col-xl-4 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Reaktivasi</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartReaktivasi"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<div class="col-xl-4 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Migrasi Limit</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartMigrasiLimit"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<div class="row">
+<!-- Pie Chart -->
+<div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Not Ok</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartNotOk"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Waiting Confirmation</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartwaitingconfirm"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+</div>
+
+
+<div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary"></h6>
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="">
+         
+  <canvas id="myChartAkuisisi"></canvas>
+
+
+            </div>
+          <!-- <small class="text-danger">
+            Minggu di bagi dalam kelipatan 7
+          </small> -->
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
 <!-- Include Chart.js library -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.0.0/chartjs-plugin-datalabels.min.js" integrity="sha512-R/QOHLpV1Ggq22vfDAWYOaMd5RopHrJNMxi8/lJu8Oihwi4Ho4BRFeiMiCefn9rasajKjnx9/fTQ/xkWnkDACg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -756,9 +982,7 @@ var interestedData = monthlyData.map(function (data) {
     return data.totalBerminat;
 });
 
-var closingData = monthlyData.map(function (data) {
-    return data.totalClosing;
-});
+
 
 
 
@@ -791,12 +1015,6 @@ var myChart = new Chart(ctx, {
             borderWidth: 1,
             barThickness: 10,
         }, {
-            label: 'Closing',
-            data: closingData,
-            backgroundColor: '#4BC0C0',
-            borderWidth: 1,
-            barThickness: 10,
-        },{
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
@@ -838,9 +1056,6 @@ var interestedData = twomonthdata.map(function (data) {
     return data.totalBerminat;
 });
 
-var closingData = twomonthdata.map(function (data) {
-    return data.totalClosing;
-});
 
 
 
@@ -873,12 +1088,6 @@ var myChart = new Chart(ctx, {
             borderWidth: 1,
             barThickness: 10,
         }, {
-            label: 'Closing',
-            data: closingData,
-            backgroundColor: '#4BC0C0',
-            borderWidth: 1,
-            barThickness: 10,
-        },{
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
@@ -924,10 +1133,6 @@ var interestedData = labels.map(function (week) {
   return weeklyData[weekNumber].totalBerminat;
 });
 
-var closingData = labels.map(function (week) {
-  var weekNumber = week.match(/\d+/)[0];
-  return weeklyData[weekNumber].totalClosing;
-});
 
 var notcallData = labels.map(function (week) {
   var weekNumber = week.match(/\d+/)[0];
@@ -957,13 +1162,7 @@ var uncontactedData = labels.map(function (week) {
                 backgroundColor: '#FF9F40',
                 borderWidth: 1,
                 barThickness: 20,
-            }, {
-                label: 'Closing',
-                data: closingData,
-                backgroundColor: '#4BC0C0',
-                borderWidth: 1,
-                barThickness: 20,
-            },
+            }, 
             {
                 label: 'Not Call Yet',
                 data: notcallData,
@@ -1010,13 +1209,6 @@ var uncontactedData = labels.map(function (week) {
                     barThickness: 50,
 
 }, {
-    label: 'Closing',
-    data: [overallTotals.totalClosing],
-    backgroundColor: '#4BC0C0',
-    borderWidth: 1,
-                    barThickness: 50,
-
-}, {
     label: 'Not Called',
     data: [overallTotals.totalNotCall],
     backgroundColor: '#9966FF',
@@ -1058,6 +1250,721 @@ var ctx = document.getElementById('myChart').getContext('2d');
 
 
 
+<!-- Akuisisi Bar Chart -->
+
+<script>
+
+@if(isset($monthlyDataAkuisisi))
+var monthlyData = @json($monthlyDataAkuisisi);
+
+var labels = monthlyData.map(function (data) {
+    return data.monthName;
+});
+
+var Reaktivasi = monthlyData.map(function (data) {
+    return data.Reaktivasi;
+});
+
+var MigrasiLimit = monthlyData.map(function (data) {
+    return data.MigrasiLimit;
+});
+
+var NotOk = monthlyData.map(function (data) {
+    return data.NotOk;
+});
+
+var Akuisisi = monthlyData.map(function (data) {
+    return data.Akuisisi;
+});
+
+var waitingconfirm = monthlyData.map(function (data) {
+    return data.waitingconfirm;
+});
+
+
+
+var ctx = document.getElementById('myChartAkuisisi').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Reaktivasi',
+            data: Reaktivasi,
+            backgroundColor: '#36A2EB',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Migrasi Limit',
+            data: MigrasiLimit,
+            backgroundColor: '#FF6384',
+            borderWidth: 1,
+            barThickness: 10,
+        }, 
+        {
+            label: 'Akuisisi',
+            data: Akuisisi,
+            backgroundColor: '#9966FF',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Not Ok',
+            data: NotOk,
+            backgroundColor: '#FF9F40',
+            borderWidth: 1,
+            barThickness: 10,
+        }, {
+            label: 'Waiting Confirmation',
+            data: waitingconfirm,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 10,
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 500,
+                min: 0,
+            }
+        }
+    }
+});
+
+
+
+@elseif(isset($twomonthdataAkuisisi))
+var twomonthdataAkuisisi = @json($twomonthdataAkuisisi);
+
+var labels = twomonthdataAkuisisi.map(function (data) {
+    return data.monthName;
+});
+
+var Reaktivasi = twomonthdataAkuisisi.map(function (data) {
+    return data.Reaktivasi;
+});
+
+var MigrasiLimit = twomonthdataAkuisisi.map(function (data) {
+    return data.MigrasiLimit;
+});
+
+var Akuisisi = twomonthdataAkuisisi.map(function (data) {
+    return data.Akuisisi;
+});
+
+var NotOk = twomonthdataAkuisisi.map(function (data) {
+    return data.NotOk;
+});
+
+
+var waitingconfirm = twomonthdataAkuisisi.map(function (data) {
+    return data.waitingconfirm;
+});
+
+
+var ctx = document.getElementById('myChartAkuisisi').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Reaktivasi',
+            data: Reaktivasi,
+            backgroundColor: '#36A2EB',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Migrasi Limit',
+            data: MigrasiLimit,
+            backgroundColor: '#FF6384',
+            borderWidth: 1,
+            barThickness: 10,
+        }, 
+        {
+            label: 'Akuisisi',
+            data: Akuisisi,
+            backgroundColor: '#9966FF',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Not Ok',
+            data: NotOk,
+            backgroundColor: '#FF9F40',
+            borderWidth: 1,
+            barThickness: 10,
+        }, {
+            label: 'Waiting Confirmation',
+            data: waitingconfirm,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 10,
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 500,
+                min: 0,
+            }
+        }
+    }
+});
+@elseif(isset($weeklyDataAkuisisi))
+
+    var weeklyDataAkuisisi = @json($weeklyDataAkuisisi);
+    var labels = Object.keys(weeklyDataAkuisisi).map(function (week) {
+  var weekData = weeklyDataAkuisisi[week];
+  return `W ${week} (${weekData.start_date} - ${weekData.end_date})`;
+});
+
+var Reaktivasi = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataAkuisisi[weekNumber].Reaktivasi;
+});
+
+
+var MigrasiLimit = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataAkuisisi[weekNumber].MigrasiLimit;
+});
+
+var Akuisisi = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataAkuisisi[weekNumber].Akuisisi;
+});
+
+var NotOk = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataAkuisisi[weekNumber].NotOk;
+});
+var waitingconfirm = labels.map(function (weekLabel) {
+  var weekNumber = weekLabel.match(/\d+/)[0]; // Get the week number from the label
+  return weeklyDataAkuisisi[weekNumber].waitingconfirm;
+});
+    var ctx = document.getElementById('myChartAkuisisi').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+            label: 'Reaktivasi',
+            data: Reaktivasi,
+            backgroundColor: '#36A2EB',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Migrasi Limit',
+            data: MigrasiLimit,
+            backgroundColor: '#FF6384',
+            borderWidth: 1,
+            barThickness: 10,
+        }, 
+        {
+            label: 'Akuisisi',
+            data: Akuisisi,
+            backgroundColor: '#9966FF',
+            barThickness: 10,
+            borderWidth: 1,
+        }, {
+            label: 'Not Ok',
+            data: NotOk,
+            backgroundColor: '#FF9F40',
+            borderWidth: 1,
+            barThickness: 10,
+        }, {
+            label: 'Waiting Confirmation',
+            data: waitingconfirm,
+            backgroundColor: '#4BC0C0',
+            borderWidth: 1,
+            barThickness: 10,
+        }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    min: 0,
+                }
+            }
+        }
+    });
+
+    @else 
+
+   // Ambil data dari PHP dan inisialisasi chart
+var overallTotalsAkuisisi = <?php echo json_encode($overallTotalsAkuisisi); ?>;
+
+// Ambil label dan data dari overallTotalsAkuisisi
+var labelsStatus = [overallTotalsAkuisisi.start_date + ' to ' + overallTotalsAkuisisi.end_date];
+var datasetsStatus = [{
+    label: 'Berminat',
+    data: [overallTotalsAkuisisi.Reaktivasi],
+    backgroundColor: '#36A2EB',
+    borderWidth: 1,
+                    barThickness: 50,
+
+
+}, {
+    label: 'Tidak Berminat',
+    data: [overallTotalsAkuisisi.MigrasiLimit],
+    backgroundColor: '#FF6384',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Tidak Terhubung',
+    data: [overallTotalsAkuisisi.Akuisisi],
+    backgroundColor: '#4BC0C0',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'No. Telp Tidak Valid',
+    data: [overallTotalsAkuisisi.NotOk],
+    backgroundColor: '#FF9F40',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, {
+    label: 'Diskusi Internal',
+    data: [overallTotalsAkuisisi.waitingconfirm],
+    backgroundColor: '#9966FF',
+    borderWidth: 1,
+                    barThickness: 50,
+
+}, ];
+
+
+// Inisialisasi chart
+var ctxStatus = document.getElementById('myChartAkuisisi').getContext('2d');
+var myStatusChart = new Chart(ctxStatus, {
+    type: 'bar',
+    data: {
+        labels: labelsStatus,
+        datasets: datasetsStatus
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+   @endif
+</script>
+
+
+<!-- End Of Akuisisi Bar Chart -->
+
+<!-- Akuisisi Data Pie -->
+
+<script>
+    var ctx = document.getElementById("myPieChartAkuisisi");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $AkuisisiPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $AkuisisiPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'bottom',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+<script>
+    var ctx = document.getElementById("myPieChartReaktivasi");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $ReaktivasiPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $ReaktivasiPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'bottom',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartMigrasiLimit");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $MigrasiLimitPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $MigrasiLimitPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'bottom',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+<script>
+    var ctx = document.getElementById("myPieChartNotOk");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $NotOkPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $NotOkPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'bottom',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+<script>
+    var ctx = document.getElementById("myPieChartwaitingconfirm");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $waitingconfirmPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $waitingconfirmPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'bottom',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+<!-- End of akuisisi Data Pie -->
 <script>
     var ctx = document.getElementById("myPieChartInterested");
 
@@ -1505,39 +2412,39 @@ var myChart = new Chart(ctx, {
             label: 'Berminat',
             data: Berminat,
             backgroundColor: '#36A2EB',
-            barThickness: 10,
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Tidak Berminat',
             data: TidakBerminat,
-            backgroundColor: '#FF9F40',
+            backgroundColor: '#FF6384',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
             label: 'Tidak Terhubung',
             data: TidakTerhubung,
             backgroundColor: '#4BC0C0',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         },
         {
             label: 'No. Telp Tidak Valid',
             data: NoTelpTidakValid,
-            backgroundColor: '#36A2EB',
-            barThickness: 10,
+            backgroundColor: '#FF9F40',
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Diskusi Internal',
             data: DiskusiInternal,
-            backgroundColor: '#FF9F40',
+            backgroundColor: '#9966FF',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
             label: 'Call Again',
             data: CallAgain,
-            backgroundColor: '#4BC0C0',
+            backgroundColor: '#FFCD56',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }]
     },
     options: {
@@ -1596,39 +2503,39 @@ var myChart = new Chart(ctx, {
             label: 'Berminat',
             data: Berminat,
             backgroundColor: '#36A2EB',
-            barThickness: 10,
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Tidak Berminat',
             data: TidakBerminat,
-            backgroundColor: '#FF9F40',
+            backgroundColor: '#FF6384',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
             label: 'Tidak Terhubung',
             data: TidakTerhubung,
             backgroundColor: '#4BC0C0',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         },
         {
             label: 'No. Telp Tidak Valid',
             data: NoTelpTidakValid,
-            backgroundColor: '#36A2EB',
-            barThickness: 10,
+            backgroundColor: '#FF9F40',
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Diskusi Internal',
             data: DiskusiInternal,
-            backgroundColor: '#FF9F40',
+            backgroundColor: '#9966FF',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
             label: 'Call Again',
             data: CallAgain,
-            backgroundColor: '#4BC0C0',
+            backgroundColor: '#FFCD56',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }]
     },
     options: {
@@ -2493,6 +3400,25 @@ $(function() {
 </script>
 
 
+<script>
+    document.getElementById('exportPdfButtonAkuisisi').addEventListener('click', function() {
+        // Select the chart container element
+        var chartContainer = document.getElementById('chartakuisisi');
+        
+       
+        // Set options for html2pdf
+        var options = {
+            margin: [5, 5, 5, 5], // Adjust margins as needed (top, left, bottom, right)     
+            filename: 'chart_export_akuisisi.pdf',
+            image: { type: 'jpeg', quality: 0.98 }, // Set image quality
+            html2canvas: { scale: 3 }, // Adjust scale as needed
+            jsPDF: { unit: 'mm', format: 'A3', orientation: 'landscape' } // Adjust format and orientation as needed
+        };
+
+        // Use html2pdf to export the chart container as PDF with specified options
+        html2pdf(chartContainer, options);
+    });
+</script>
 
 
 </body>

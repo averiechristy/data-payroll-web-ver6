@@ -30,6 +30,7 @@ class DataLeads extends Model
         'status',
         'keterangan',
         'jenis_data',
+        'status_akuisisi',
         'tanggal_follow_up',
         'tanggal_terima_form_kbb',
         'tanggal_terima_form_kbb_payroll',
