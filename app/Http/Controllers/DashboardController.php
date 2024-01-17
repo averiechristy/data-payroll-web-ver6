@@ -678,7 +678,6 @@ $waitingconfirm = $dataleads->where('status_akuisisi', 'Waiting confirmation fro
 
 
 
-
 $persentaseStatusBerminat = $dataleads->count() > 0 ? number_format(($Berminat / $dataleads->count()) * 100, 1) : 0;
 $persentaseStatusTidakBerminat =  $dataleads->count() > 0 ? number_format(($TidakBerminat / $dataleads->count()) * 100, 1) : 0;
 $persentaseStatusTidakTerhubung =  $dataleads->count() > 0 ? number_format(($TidakTerhubung / $dataleads->count()) * 100, 1) : 0;
@@ -687,12 +686,12 @@ $persentaseStatusDiskusiInternal =  $dataleads->count() > 0 ? number_format(($Di
 $persentaseStatusCallAgain =  $dataleads->count() > 0 ? number_format(($CallAgain / $dataleads->count()) * 100, 1) : 0;
 
 
+
 $persentaseReaktivasi =  $dataleads->count() > 0 ? number_format(($Reaktivasi / $dataleads->count()) * 100, 1) : 0;
 $persentaseMigrasiLimit =  $dataleads->count() > 0 ? number_format(($MigrasiLimit / $dataleads->count()) * 100, 1) : 0;
 $persentaseAkuisisi =  $dataleads->count() > 0 ? number_format(($Akuisisi / $dataleads->count()) * 100, 1) : 0;
 $persentaseNotOk =  $dataleads->count() > 0 ? number_format(($NotOk / $dataleads->count()) * 100, 1) : 0;
 $persentasewaitingconfirm =  $dataleads->count() > 0 ? number_format(($waitingconfirm / $dataleads->count()) * 100, 1) : 0;
-
 
 
        

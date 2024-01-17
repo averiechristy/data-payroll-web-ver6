@@ -43,20 +43,33 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
         
         foreach ($rows as $row) { 
          
-           
+        
             if (empty(array_filter($row->toArray()))) {
                 // Baris kosong, skip pemrosesan
                 continue;
             }
 
+            $namaPerusahaan = $row['nama_perusahaan'];
+
+            // Ubah nama perusahaan menjadi huruf kecil
+            $namaPerusahaanLowercase = strtolower($namaPerusahaan);
+            
+            // Cek apakah lead dengan nama perusahaan yang sama sudah ada
            
- $existingLeads = DataLeads::where('cust_name', $row['nama_perusahaan'])
+ $existingLead = DataLeads::where('cust_name', $namaPerusahaanLowercase)
+ ->where('tanggal_awal', $this->tanggal_awal_akuisisi)
+ ->where('tanggal_akhir', $this->tanggal_akhir_akuisisi)
             ->where('kcu', $this->kcu)
-            ->get();
-        
+            ->first();
+
+            
+         
+
+            if ($existingLead) {
+            
             // foreach ($existingLeads as $existingLead) {
 
-                foreach ($existingLeads as $existingLead) {
+                // foreach ($existingLeads as $existingLead) {
                     $tanggal_awal_rekap_akuisisi = new \DateTime($this->tanggal_awal_akuisisi);
                     $tanggal_akhir_rekap_akuisisi = new \DateTime($this->tanggal_akhir_akuisisi);
 
@@ -65,17 +78,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                     $tanggal_akhir = new \DateTime($existingLead->tanggal_akhir);
 
 
-                    // if (!empty($row['keterangan'])) {
-                    //     $validStatusValuesakuisisi = ['reaktivasi', 'migrasi limit', 'akuisisi', 'not ok', 'ok fitur', 'waiting for confirmation from bca','limit sudah terbuka'];
-
-                    //     $lowercaseStatus = strtolower($row['keterangan']);
-                    //     if (!in_array($lowercaseStatus, $validStatusValuesakuisisi)) {
-                    //         // Jika tidak valid, buat pesan error
-                    //         throw new \Exception("Invalid status value '{$row['keterangan']}'.");
-                    //     }
-                        
-                    // }
-
+            
                     
                     
 
@@ -95,8 +98,8 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         } else {
                             if (!in_array(strtolower($row['keterangan']), $validStatusValuesakuisisi) || $row['keterangan'] === null) {
                                 $status_akuisisi = 'Waiting confirmation from BCA';
-                            } elseif (strtolower($row['keterangan']) == 'limit sudah terbuka') {
-                                // Tambahkan kondisi untuk menetapkan nilai 'Not Ok' jika keterangan adalah 'limit sudah terbuka'
+                            } elseif (strtolower($row['keterangan']) == 'limit sudah terbuka' || strtolower($row['keterangan']) == 'limit sudah terbuka lebih dulu') {
+                                // Tambahkan kondisi untuk menetapkan nilai 'Not Ok' jika keterangan adalah 'limit sudah terbuka' atau 'limit sudah terbuka lebih dulu'
                                 $status_akuisisi = 'Not Ok';
                             } else {
                                 // Tambahkan pengecekan untuk pesan kesalahan jika 'ok fitur' tapi tanggal kosong
@@ -142,9 +145,12 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                     DataLog::create($logData);
         
                 }
-                else {
+            }
+                else   {
 
-                    $validStatusValuesakuisisi = ['reaktivasi', 'migrasi limit', 'akuisisi', 'not ok', 'ok fitur', 'waiting for confirmation from bca', 'limit sudah terbuka'];
+                  
+
+                    $validStatusValuesakuisisi = ['reaktivasi', 'migrasi limit', 'akuisisi', 'not ok', 'ok fitur', 'waiting for confirmation from bca', 'limit sudah terbuka', 'limit sudah terbuka lebih dulu'];
 
                     $status_akuisisi = 'Akuisisi';
                     
@@ -157,8 +163,8 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                     } else {
                         if (!in_array(strtolower($row['keterangan']), $validStatusValuesakuisisi) || $row['keterangan'] === null) {
                             $status_akuisisi = 'Waiting confirmation from BCA';
-                        } elseif (strtolower($row['keterangan']) == 'limit sudah terbuka') {
-                            // Tambahkan kondisi untuk menetapkan nilai 'Not Ok' jika keterangan adalah 'limit sudah terbuka'
+                        } elseif (strtolower($row['keterangan']) == 'limit sudah terbuka' || strtolower($row['keterangan']) == 'limit sudah terbuka lebih dulu') {
+                            // Tambahkan kondisi untuk menetapkan nilai 'Not Ok' jika keterangan adalah 'limit sudah terbuka' atau 'limit sudah terbuka lebih dulu'
                             $status_akuisisi = 'Not Ok';
                         } else {
                             // Tambahkan pengecekan untuk pesan kesalahan jika 'ok fitur' tapi tanggal kosong
@@ -209,11 +215,11 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
 
                     DataLog::create($logData);
                 }
-            }
-                if ($existingLeads->isEmpty()) {
+            // }
+            //     if ($existingLeads->isEmpty()) {
 
-                    $errorMessage = 'Tidak ada data nama perusahaan yang cocok dengan data leads';
-            throw new \Exception($errorMessage);
+            //         $errorMessage = 'Tidak ada data nama perusahaan yang cocok dengan data leads';
+            // throw new \Exception($errorMessage);
                     // // ... (Your existing logic for creating new records)
                 
                     // $lastNo = DataLeads::max('no');
@@ -249,7 +255,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
 
                     // DataLog::create($logData);
 
-                }
+                // }
                 
             }
 

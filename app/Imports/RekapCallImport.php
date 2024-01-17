@@ -51,14 +51,20 @@ class RekapCallImport implements ToCollection, WithHeadingRow
             }
 
             
+            $namaPerusahaan = $row['nama_nasabah'];
+
+            // Ubah nama perusahaan menjadi huruf kecil
+            $namaPerusahaanLowercase = strtolower($namaPerusahaan);
+            
     
-            $existingLead = DataLeads::where('cust_name', $row['nama_nasabah'])
+            $existingLead = DataLeads::where('cust_name',  $namaPerusahaanLowercase)
             ->where('kcu', $this->kcu) // Menambahkan kondisi untuk memastikan kcu sesuai
             ->where('tanggal_awal', $this->tanggal_awal_call)
             ->where('tanggal_akhir', $this->tanggal_akhir_call)
             ->first();
 
           
+           
 
             if ($existingLead) {
                 // Update the existing lead with data from the Excel file
@@ -191,58 +197,40 @@ class RekapCallImport implements ToCollection, WithHeadingRow
             }
 
                 // Jika customer name tidak ditemukan, buat data baru
-                if ($row['data_leads_referral_cabang'] === 'Referral') {
-                    $tanggalFollowUp = null;
+                else if ($row['data_leads_referral_cabang'] === 'Referral') {
             
-                    // Check if 'tanggal_follow_up' is not null in the Excel data
-                    if (!is_null($row['tanggal_follow_up'])) {
-                        try {
-                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);
-                            // Menentukan minggu keberapa dari tanggal_follow_up
-                            $mingguKeberapa = date('W', $tanggalFollowUp->getTimestamp());
-                            // Menghitung tanggal awal dan akhir minggu
-                            // $tanggalAwalMinggu = strtotime("{$tanggalFollowUp->format('Y-m-d')} -". ($tanggalFollowUp->format('N')-1) ." days");
-                            // $tanggalAkhirMinggu = strtotime("{$tanggalFollowUp->format('Y-m-d')} +". (7-$tanggalFollowUp->format('N')) ." days");
-                            $lastNo = DataLeads::max('no');
-                            // Menambahkan 1 ke nomor terakhir
-                            $newNo = $lastNo + 1;
-                            // Simpan data baru di tabel DataLeads untuk jenis data referral
-                            DataLeads::create([
-                                'no' => $newNo,
-                                'cust_name' => $row['nama_nasabah'],
-                                'jenis_data' => $row['data_leads_referral_cabang'],
-                                'status' => $row['status_follow_up'],
-                                'tanggal_follow_up' => $tanggalFollowUp,
-                                'tanggal_awal' => $tanggalFollowUp,
-                                'tanggal_akhir' => $tanggalFollowUp,
-                                'kcu' => $this->kcu, 
-                                'data_tanggal' => $tanggalFollowUp,
-                                'nama_pic_kbb' => $row['pic_nasabah'],
-
-                               
-                                // Tambahkan kolom lain sesuai kebutuhan
-                            ]);
-
-                            $newLeadId = DataLeads::where('cust_name', $row['nama_nasabah'])->first()->id;
-
-                            // Set data untuk DataLog
-                            $logData = [
-                                'id_data_leads' => $newLeadId,
-                                'jenis_data' => 'Referral', // Sesuaikan dengan jenis data yang dibuat di DataLeads
-                                'status' => $row['status_follow_up'],
-                                'tanggal_follow_up' => $tanggalFollowUp,
-                                'kcu' => $this->kcu, 
-                                'data_tanggal' => $tanggalFollowUp,
-                            ];
-
-                            DataLog::create($logData);
-
-
-                        } catch (\Exception $e) {
-                            // Jika tidak valid, buat pesan error
-                            throw new \Exception("Invalid date format '{$row['tanggal_follow_up']}'.");
-                        }
-                    }
+                    $lastNo = DataLeads::max('no');
+                    // Menambahkan 1 ke nomor terakhir
+                    $newNo = $lastNo + 1;
+                    // Simpan data baru di tabel DataLeads untuk jenis data referral
+                    DataLeads::create([
+                        'no' => $newNo,
+                        'cust_name' => $row['nama_nasabah'],
+                        'jenis_data' => $row['data_leads_referral_cabang'],
+                        'status' => $row['status_follow_up'],
+                        'tanggal_follow_up' => $tanggalFollowUp,
+                        'tanggal_awal' => $tanggal_awal_rekap_call,
+                        'tanggal_akhir' => $tanggal_akhir_rekap_call,
+                        'kcu' => $this->kcu, 
+                        'data_tanggal' => $tanggalFollowUp,
+                        'nama_pic_kbb' => $row['pic_nasabah'],
+                        // Tambahkan kolom lain sesuai kebutuhan
+                    ]);
+    
+                    $newLeadId = DataLeads::where('cust_name', $row['nama_nasabah'])->first()->id;
+    
+                    // Set data untuk DataLog
+                    $logData = [
+                        'id_data_leads' => $newLeadId,
+                        'jenis_data' => 'Referral', // Sesuaikan dengan jenis data yang dibuat di DataLeads
+                        'status' => $row['status_follow_up'],
+                        'tanggal_follow_up' => $tanggalFollowUp,
+                        'kcu' => $this->kcu, 
+                        'data_tanggal' => $tanggalFollowUp,
+                    ];
+    
+                    DataLog::create($logData);
+    
                 }
             }
 
