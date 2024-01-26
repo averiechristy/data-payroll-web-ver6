@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataAkuisisi;
 use App\Models\DataKCU;
 use App\Models\DataLeads;
 
+use App\Models\DataUsage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -29,20 +31,71 @@ class DashboardController extends Controller
     $startOfMonth = $today->startOfMonth();
     
     $endOfMonth = $today->copy()->endOfMonth();
+
+
+    $laststartmonth = $today->copy()->startOfMonth()->subMonth();
+    
+    $lastendmonth = $today->copy()->endOfMonth()->subMonth();
+
+
     
     $dataleads = DataLeads::where('data_tanggal', '>=', $startOfMonth)
         ->where('data_tanggal', '<=', $endOfMonth)
         ->get();
-       
+
+    
+
+    $datausageclaimbedabulan = DataUsage::where('tanggal_usage_claim', '>=', $startOfMonth)
+    ->where('tanggal_usage_claim', '<=', $endOfMonth)
+    ->get();
+
+
+   $datausageclaimbulansama = DataLeads::where('tanggal_usage_claim', '>=', $startOfMonth)
+   ->where('tanggal_usage_claim', '<=', $endOfMonth)
+   ->get();
+
+
+
+   $datastatusakuisisibedabulan = DataAkuisisi::where('tanggal_status', '>=', $startOfMonth)
+   ->where('tanggal_status', '<=', $endOfMonth)
+   ->get();
+
+
+
+
+        $totaldataleads = $dataleads->count();
+
+        $totaldatausageclaimbulansama = $datausageclaimbulansama->count();
+
+        $totaldatausageclaimbedabulan = $datausageclaimbedabulan->count();
+
+        $totaldatastatusakuisisibedabulan = $datastatusakuisisibedabulan->count();
+
+    
 
     $kcu = DataKCU::all();
 
     $dtkcu = DataKCU::all();
 
+    $totaldatausageclaimbulansamaPerKCU = [];
+    foreach ($kcu as $item) {
+        $totaldatausageclaimbulansamaPerKCU[$item->id] = $datausageclaimbulansama->where('kcu', $item->id)->count();
+    }
+
+    
+    $totaldatausageclaimbedabulanPerKCU = [];
+    foreach ($kcu as $item) {
+        $totaldatausageclaimbedabulanPerKCU[$item->id] = $datausageclaimbedabulan->where('kcu', $item->id)->count();
+    }
+
+
+    
+
     $totalBerminatPerKCU = [];
     foreach ($kcu as $item) {
         $totalBerminatPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->whereIn('status', ['Berminat',  'Diskusi Internal'])->count();
     }
+
 
     $totalContactedPerKCU = [];
     foreach ($kcu as $item) {
@@ -164,6 +217,9 @@ class DashboardController extends Controller
    
 $persentaseUnContacted =  $dataleads->count() > 0 ? number_format(($totalUnContacted / $dataleads->count()) * 100, 1) : 0;
 
+
+
+
 $Berminat = $dataleads->where('status', 'Berminat')->count();
 $TidakBerminat = $dataleads->where('status', 'Tidak Berminat')->count();
 $TidakTerhubung = $dataleads->where('status', 'Tidak Terhubung')->count();
@@ -179,6 +235,45 @@ $waitingconfirm = $dataleads->where('status_akuisisi', 'Waiting confirmation fro
 
 
 
+$ReaktivasiBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Reaktivasi')->count();
+$MigrasiLimitBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Migrasi Limit')->count();
+$AkuisisiBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Akuisisi')->count();
+$waitingconfirmBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Waiting confirmation from BCA')->count();
+
+$statusgabungan =  $dataleads->where('status_akuisisi', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+$statusgabunganBedaBulan =  $datastatusakuisisibedabulan->where('status_akuisisi', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+
+
+$statusgabunganPerKCU = [];
+foreach ($kcu as $item) {
+    $statusgabunganPerKCU [$item->id] = $dataleads->where('kcu', $item->id)->where('status_akuisisi','Migrasi Limit/ Reaktivasi/ Not OK')->count();
+}
+
+$statusgabunganBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $statusgabunganBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Migrasi Limit/ Reaktivasi/ Not OK')->count();
+}
+
+
+$ReaktivasiBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $ReaktivasiBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Reaktivasi')->count();
+}
+
+$MigrasiLimitBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $MigrasiLimitBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Migrasi Limit')->count();
+}
+
+$AkuisisiBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $AkuisisiBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Akuisisi')->count();
+}
+
+$waitingconfirmBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $waitingconfirmBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Waiting confirmation from BCA')->count();
+}
 
 
 
@@ -194,6 +289,7 @@ $persentaseMigrasiLimit = $dataleads->count() > 0 ? number_format(($MigrasiLimit
 $persentaseAkuisisi = $dataleads->count() > 0 ? number_format(($Akuisisi / $dataleads->count()) * 100, 1) : 0;
 $persentaseNotOk = $dataleads->count() > 0 ? number_format(($NotOk / $dataleads->count()) * 100, 1) : 0;
 $persentasewaitingconfirm = $dataleads->count() > 0 ? number_format(($waitingconfirm / $dataleads->count()) * 100, 1) : 0;
+$persentasestatusgabungan = $dataleads->count() > 0 ? number_format(($statusgabungan / $dataleads->count()) * 100, 1) : 0;
 
        
     $weeklyData = [];
@@ -370,15 +466,14 @@ $persentasewaitingconfirm = $dataleads->count() > 0 ? number_format(($waitingcon
    
 
     return view('dashboard', [
+        
+'weeklyData' => $weeklyData,
+       
+        'persentaseClosing' => $persentaseClosing,
+      
+        'totalClosingPerKCU' => $totalClosingPerKCU,
         'dataleads' => $dataleads,
         'kcu' => $kcu,
-'weeklyData' => $weeklyData,
-        'persentaseBerminat' => $persentaseBerminat, 
-        'persentaseContacted' => $persentaseContacted,
-        'persentaseClosing' => $persentaseClosing,
-        'totalBerminatPerKCU' => $totalBerminatPerKCU,
-        'totalContactedPerKCU' => $totalContactedPerKCU,
-        'totalClosingPerKCU' => $totalClosingPerKCU,
       
         'dtkcu' => $dtkcu,
         'totalClosing' => $totalClosing,
@@ -397,12 +492,17 @@ $persentasewaitingconfirm = $dataleads->count() > 0 ? number_format(($waitingcon
        'totalBerminat' => $totalBerminat,
        'totalNotCall' => $totalNotCall,
        'totalContacted' => $totalContacted,
-       'persentaseNotCall' =>  $persentaseNotCall,
        'totalUnContacted' => $totalUnContacted,
        'persentaseUnContacted' => $persentaseUnContacted,
+       'persentaseBerminat' => $persentaseBerminat, 
+       'persentaseContacted' => $persentaseContacted,
+       'persentaseNotCall' =>  $persentaseNotCall,
+
 
        'totalUnContactedPerKCU' => $totalUnContactedPerKCU,
        'totalNotCallPerKCU' => $totalNotCallPerKCU,
+       'totalBerminatPerKCU' => $totalBerminatPerKCU,
+       'totalContactedPerKCU' => $totalContactedPerKCU,
 
        'weeklyDataStatus' => $weeklyDataStatus,
 
@@ -430,8 +530,27 @@ $persentasewaitingconfirm = $dataleads->count() > 0 ? number_format(($waitingcon
        'NotOkPerKCU' => $NotOkPerKCU,
        'MigrasiLimitPerKCU' => $MigrasiLimitPerKCU,
        'AkuisisiPerKCU' => $AkuisisiPerKCU,
-       'waitingconfirmPerKCU' => $waitingconfirmPerKCU
-        
+       'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
+       'totaldataleads' =>  $totaldataleads,
+       'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
+
+        'statusgabunganPerKCU' => $statusgabunganPerKCU,
+        'statusgabungan' => $statusgabungan,
+        'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+        'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+        'persentasestatusgabungan'=> $persentasestatusgabungan,
+
     ]);
 }
 
@@ -443,7 +562,7 @@ public function filterdata(Request $request)
     $tanggalawal = $request->input('tanggal_awal');
     $tanggalakhir = $request->input('tanggal_akhir');
 
-    
+
     if ($tanggalakhir < $tanggalawal) {
             
         $request->session()->flash('error', 'Tanggal Akhir tidak boleh kurang dari Tanggal Awal.');
@@ -458,11 +577,12 @@ public function filterdata(Request $request)
     $startOfWeek = $today->startOfWeek(); 
     $endOfWeek = $today->copy()->endOfWeek();    
 
-    
+ 
 
     $dataLeads = DataLeads::where('tanggal_awal', '>=', $startOfWeek)
     ->where('tanggal_awal', '<=', $endOfWeek)
     ->get();
+    
 
     $today = Carbon::now();
     $startOfMonth = $today->startOfMonth();
@@ -473,12 +593,33 @@ public function filterdata(Request $request)
         ->where('data_tanggal', '<=', $endOfMonth)
         ->get();
 
+        $datausageclaimbulansama = DataLeads::where('tanggal_usage_claim', '>=', $startOfMonth)
+    ->where('tanggal_usage_claim', '<=', $endOfMonth)
+    ->get();
+        
+    $datausageclaimbedabulan = DataUsage::where('tanggal_usage_claim', '>=', $startOfMonth)
+    ->where('tanggal_usage_claim', '<=', $endOfMonth)
+    ->get();
+
+    $datastatusakuisisibedabulan = DataAkuisisi::where('tanggal_status', '>=', $startOfMonth)
+    ->where('tanggal_status', '<=', $endOfMonth)
+    ->get();
+        
+
         if ($tanggalawal && $tanggalakhir) {
             // Filter berdasarkan range tanggal
             $dataleads = DataLeads::whereBetween('data_tanggal', [$tanggalawal, $tanggalakhir]);
-        
+            $datausageclaimbulansama = DataLeads::whereBetween('tanggal_usage_claim', [$tanggalawal, $tanggalakhir]);
+            $datausageclaimbedabulan = DataUsage::whereBetween('tanggal_usage_claim', [$tanggalawal, $tanggalakhir]);
+            $datastatusakuisisibedabulan = DataAkuisisi::whereBetween('tanggal_status', [$tanggalawal, $tanggalakhir]);
+
+            
+
             $dataleads = DataLeads::where('data_tanggal', '>=', $tanggalawal)
                 ->where('data_tanggal', '<=', $tanggalakhir);
+
+
+               
         
                 $startOfMonth = Carbon::parse($tanggalawal)->startOfMonth();
                 $endOfMonth = Carbon::parse($tanggalakhir)->endOfMonth();
@@ -519,27 +660,51 @@ public function filterdata(Request $request)
         
             $dataleads = DataLeads::where('tanggal_awal', '>=', $startOfMonth)
                 ->where('tanggal_awal', '<=', $endOfMonth);
+
+                $datausageclaimbulansama = DataLeads::where('tanggal_usage_claim', '>=', $startOfMonth)
+        ->where('tanggal_usage_claim', '<=', $endOfMonth);
+
+        $datausageclaimbedabulan = DataUsage::where('tanggal_usage_claim', '>=', $startOfMonth)
+        ->where('tanggal_usage_claim', '<=', $endOfMonth);
+
+        $datastatusakuisisibedabulan = DataAkuisisi::where('tanggal_status', '>=', $startOfMonth)
+        ->where('tanggal_usage_claim', '<=', $endOfMonth);
+       
         }
         
-       
+      
         
-    if ($selectedKCU) {
-        $dataleads->where('kcu', $selectedKCU);
-    }
-
-    
-    if ($selectedJenis) {
-        $dataleads->where('jenis_data', $selectedJenis);
-    }
-
+        if ($selectedKCU) {
+            $dataleads->where('kcu', $selectedKCU);
+            $datausageclaimbulansama->where('kcu', $selectedKCU);
+            $datausageclaimbedabulan->where('kcu', $selectedKCU);
+            $datastatusakuisisibedabulan->where('kcu', $selectedKCU);
+        }
+        
+        if ($selectedJenis) {
+            $dataleads->where('jenis_data', $selectedJenis);
+            $datausageclaimbulansama->where('jenis_data', $selectedJenis);
+            $datausageclaimbedabulan->where('jenis_data', $selectedJenis);
+            $datastatusakuisisibedabulan->where('jenis_data', $selectedJenis);
+        }
+        
    
 
-    $dataleads = $dataleads->get();
+        $dataleads = $dataleads->get();
+        $datausageclaimbulansama = $datausageclaimbulansama->get();
+        $datausageclaimbedabulan = $datausageclaimbedabulan->get();
+        $datastatusakuisisibedabulan = $datastatusakuisisibedabulan->get();
+        
+  
+    $totaldataleads = $dataleads->count();
+    $totaldatausageclaimbulansama = $datausageclaimbulansama->count();
+
+    $totaldatausageclaimbedabulan = $datausageclaimbedabulan->count();
 
   
-
-
     $kcu = DataKCU::all();
+
+  
     
     $dtkcu = DataKCU::all();
 
@@ -549,9 +714,8 @@ public function filterdata(Request $request)
         $totalBerminatPerKCU[$item->id] = $dataleads->where('kcu', $item->id)->whereIn('status', ['Berminat',  'Diskusi Internal'])->count();
     }
 
+  
    
-   
-
     $totalContactedPerKCU = [];
     foreach ($kcu as $item) {
         $totalContactedPerKCU[$item->id] = $dataleads->where('kcu', $item->id)
@@ -694,10 +858,64 @@ $persentaseNotOk =  $dataleads->count() > 0 ? number_format(($NotOk / $dataleads
 $persentasewaitingconfirm =  $dataleads->count() > 0 ? number_format(($waitingconfirm / $dataleads->count()) * 100, 1) : 0;
 
 
-       
+$ReaktivasiBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Reaktivasi')->count();
+$MigrasiLimitBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Migrasi Limit')->count();
+$AkuisisiBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Akuisisi')->count();
+$waitingconfirmBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Waiting confirmation from BCA')->count();
+
+
+$statusgabungan =  $dataleads->where('status_akuisisi', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+$statusgabunganBedaBulan =  $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+
+
+$persentasestatusgabungan = $dataleads->count() > 0 ? number_format(($statusgabungan / $dataleads->count()) * 100, 1) : 0;
+
+
+$statusgabunganPerKCU = [];
+foreach ($kcu as $item) {
+    $statusgabunganPerKCU [$item->id] = $dataleads->where('kcu', $item->id)->where('status_akuisisi','Migrasi Limit/ Reaktivasi/ Not OK')->count();
+}
+
+$statusgabunganBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $statusgabunganBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Migrasi Limit/ Reaktivasi/ Not OK')->count();
+}
+
+$ReaktivasiBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $ReaktivasiBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Reaktivasi')->count();
+}
+
+$MigrasiLimitBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $MigrasiLimitBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Migrasi Limit')->count();
+}
+
+$AkuisisiBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $AkuisisiBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Akuisisi')->count();
+}
+
+$waitingconfirmBedaBulanPerKCU = [];
+foreach ($kcu as $item) {
+    $waitingconfirmBedaBulanPerKCU [$item->id] = $datastatusakuisisibedabulan->where('kcu', $item->id)->where('status_akuisisi_baru','Waiting confirmation from BCA')->count();
+}
+
+$totaldatausageclaimbulansamaPerKCU = [];
+foreach ($kcu as $item) {
+    $totaldatausageclaimbulansamaPerKCU[$item->id] = $datausageclaimbulansama->where('kcu', $item->id)->count();
+}
+
+
+$totaldatausageclaimbedabulanPerKCU = [];
+foreach ($kcu as $item) {
+    $totaldatausageclaimbedabulanPerKCU[$item->id] = $datausageclaimbedabulan->where('kcu', $item->id)->count();
+}
+     
+if ($tanggalawal && $tanggalakhir) {
 $isOneYearRange = Carbon::parse($tanggalawal)->diffInMonths($endOfMonth) === 11;
 
-$isOneMonthRange = (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 29) || (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 30)|| (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 31);
+$isOneMonthRange = (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 28) || (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 29) || (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 30)|| (Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) == 31);
    
 
 $istwomonthrange = Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) >= 59 && Carbon::parse($tanggalawal)->diffInDays($tanggalakhir) <= 62;
@@ -935,9 +1153,10 @@ if ($istwomonthrange) {
             'totalContactedPerKCU' => $totalContactedPerKCU,
             'totalClosingPerKCU' => $totalClosingPerKCU,
             'dtkcu' => $dtkcu,
-            'selectedKCU' =>$selectedKCU,
+        
             'dataKCU' => $dataKCU,
             'selectedJenis' => $selectedJenis,
+            'selectedKCU' =>$selectedKCU,
             'tanggalAwal' => $tanggalawal,
             'tanggalAkhir' => $tanggalakhir,
             'totalClosing' => $totalClosing,
@@ -990,12 +1209,30 @@ if ($istwomonthrange) {
        'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
 
        'twomonthdataAkuisisi' => $twomonthdataAkuisisi,
-         
-            
+       'totaldataleads' =>  $totaldataleads,
+
+       'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
+
+       'statusgabunganPerKCU' => $statusgabunganPerKCU,
+       'statusgabungan' => $statusgabungan,
+       'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+       'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+       'persentasestatusgabungan'=> $persentasestatusgabungan,
+
         ]);
 
 }
-
 
 
 elseif ($isOneYearRange) {
@@ -1300,8 +1537,27 @@ session()->put('tanggalAkhir', $tanggalakhir);
        'AkuisisiPerKCU' => $AkuisisiPerKCU,
        'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
 
-       'monthlyDataAkuisisi'=> $monthlyDataAkuisisi
-        
+       'monthlyDataAkuisisi'=> $monthlyDataAkuisisi,
+       'totaldataleads' =>  $totaldataleads,
+       'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
+
+       'statusgabunganPerKCU' => $statusgabunganPerKCU,
+       'statusgabungan' => $statusgabungan,
+       'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+       'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+       'persentasestatusgabungan'=> $persentasestatusgabungan,
+
     ]);
     
 }
@@ -1671,9 +1927,28 @@ return view('dashboard', [
        'NotOkPerKCU' => $NotOkPerKCU,
        'MigrasiLimitPerKCU' => $MigrasiLimitPerKCU,
        'AkuisisiPerKCU' => $AkuisisiPerKCU,
-       'waitingconfirmPerKCU' => $waitingconfirmPerKCU
+       'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
+       'totaldataleads' =>  $totaldataleads,
+       'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
 
 
+
+       'statusgabunganPerKCU' => $statusgabunganPerKCU,
+       'statusgabungan' => $statusgabungan,
+       'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+       'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+       'persentasestatusgabungan'=> $persentasestatusgabungan,
 
 ]);
 
@@ -1863,7 +2138,7 @@ else {
 
     ];
 
-
+ 
 session()->put('selectedJenis', $selectedJenis);
 session()->put('selectedKCU', $selectedKCU);
 session()->put('tanggalAwal', $tanggalawal);
@@ -1880,8 +2155,9 @@ return view('dashboard', [
     'totalClosingPerKCU' => $totalClosingPerKCU,
     'dtkcu' => $dtkcu,
     'selectedKCU' =>$selectedKCU,
-    'dataKCU' => $dataKCU,
     'selectedJenis' => $selectedJenis,
+    'dataKCU' => $dataKCU,
+   
     'tanggalAwal' => $tanggalawal,
     'tanggalAkhir' => $tanggalakhir,
     'totalClosing' => $totalClosing,
@@ -1935,10 +2211,376 @@ return view('dashboard', [
     'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
 
       'overallTotalsAkuisisi' => $overallTotalsAkuisisi, 
+      'totaldataleads' =>  $totaldataleads,
+      'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
+
+
+       'statusgabunganPerKCU' => $statusgabunganPerKCU,
+       'statusgabungan' => $statusgabungan,
+       'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+       'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+       'persentasestatusgabungan'=> $persentasestatusgabungan,
+
 ]);
 
 }
 
+}
+
+else {
+    $weeklyData = [];
+
+    $weeklyData = [];
+
+    $today = Carbon::now();
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
+    
+    $weekCount = 0;
+    $selectedKCU = $request->input('kcu');
+    $selectedJenis = $request->input('jenis_data');
+    
+    while ($currentWeekStart->lte($endOfMonth)) {
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
+    
+    
+    
+        $weeklyData[] = [
+            'start_date' => $currentWeekStart->toDateString(),
+            'end_date' => $currentWeekEnd->toDateString(),
+            'totalBerminat' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal'])
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+            'totalContacted' => DataLeads::whereIn('status', ['Berminat', 'Diskusi Internal', 'Tidak Berminat', 'Call Again', 'Closing'])
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+            'totalClosing' => DataLeads::where('status', 'Closing')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+
+                'totalNotCall' => DataLeads::where('status', 'Belum Dikerjakan')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+
+                'totalUnContacted' => DataLeads::whereIn('status', ['Tidak Terhubung', 'No. Telp Tidak Valid'])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+        ];
+    
+        $currentWeekStart->addWeek();     
+        // Stop the loop if the current week exceeds the end of the month
+        // if ($currentWeekStart->gt($endOfMonth)) {
+        //     break;
+        // }    
+    }
+    
+    // Modifikasi indeks array
+    $weeklyData = array_combine(range(1, count($weeklyData)), array_values($weeklyData));
+
+    
+  
+    $weeklyDataStatus = [];
+
+ 
+    $today = Carbon::now();
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
+    $weekCount = 0;
+
+    while ($currentWeekStart->lte($endOfMonth)) {
+
+        $selectedKCU = $request->input('kcu');
+        $selectedJenis = $request->input('jenis_data');
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+    
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
+
+    
+        $weeklyDataStatus[] = [
+            'start_date' => $currentWeekStart->toDateString(),
+            'end_date' => $currentWeekEnd->toDateString(),
+            'Berminat' => DataLeads::where('status','Berminat')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+            'TidakBerminat' => DataLeads::where('status','Tidak Berminat')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+            'TidakTerhubung' => DataLeads::where('status', 'Tidak Terhubung')
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+
+                'NoTelpTidakValid' => DataLeads::where('status', 'No. Telp Tidak Valid')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->count(),
+                'DiskusiInternal' => DataLeads::where('status', 'Diskusi Internal')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+
+                'CallAgain' => DataLeads::where('status',  'Call Again')
+                ->when($selectedKCU, function ($query) use ($selectedKCU) {
+                    return $query->where('kcu', $selectedKCU);
+                })
+                ->when($selectedJenis, function ($query) use ($selectedJenis) {
+                    return $query->where('jenis_data', $selectedJenis);
+                })
+                ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+                ->count(),
+
+        ];
+        // $currentWeekStart->addDays(7); // Move to the next week
+
+        $currentWeekStart->addWeek();     
+    
+        // Stop the loop if the current week exceeds the end of the month
+        // if ($currentWeekStart->gt($endOfMonth)) {
+        //     break;
+        // } // Pindah ke minggu berikutnya (10 hari untuk memastikan selalu melewati akhir bulan)
+    }
+    
+    // Modifikasi indeks array
+    $weeklyDataStatus = array_combine(range(1, count($weeklyDataStatus)), array_values($weeklyDataStatus));
+
+
+
+
+
+    $weeklyDataAkuisisi = [];
+
+    $today = Carbon::now();
+    $monthstart = $today->startOfMonth();
+    
+    $currentWeekStart = $monthstart->startOfWeek();  
+    
+    
+    $weekCount = 0;
+   
+    
+    while ($currentWeekStart->lte($endOfMonth)) {
+        // Calculate the end of the week, but ensure it does not go beyond the end of the month
+        // $currentWeekEnd = min($currentWeekStart->copy()->addDays(6)->endOfDay(), $endOfMonth);
+        $currentWeekEnd = $currentWeekStart->copy()->endOfWeek();
+        if ($currentWeekEnd->gt($endOfMonth)) {
+            // If yes, set the end of the week to the end of the month
+            $currentWeekEnd = $endOfMonth;
+        }
+    
+    
+    
+        $weeklyDataAkuisisi[] = [
+            'start_date' => $currentWeekStart->toDateString(),
+            'end_date' => $currentWeekEnd->toDateString(),
+            'Reaktivasi' => DataLeads::where('status_akuisisi','Reaktivasi')
+            ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+            ->count(),
+            'MigrasiLimit' => DataLeads::where('status_akuisisi','Migrasi Limit')
+            ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+            ->count(),
+            'NotOk' => DataLeads::where('status_akuisisi','Not Ok')
+            ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+            ->count(),
+            'waitingconfirm' => DataLeads::where('status_akuisisi',  'Waiting confirmation from BCA')
+            ->whereBetween('data_tanggal', [$currentWeekStart, $currentWeekEnd])
+            ->count(),
+        ];
+    
+        $currentWeekStart->addWeek();     
+        // Stop the loop if the current week exceeds the end of the month
+        // if ($currentWeekStart->gt($endOfMonth)) {
+        //     break;
+        // }    
+    }
+    
+    // Modifikasi indeks array
+    $weeklyDataAkuisisi = array_combine(range(1, count($weeklyDataAkuisisi)), array_values($weeklyDataAkuisisi));
+
+
+    session()->put('selectedJenis', $selectedJenis);
+    session()->put('selectedKCU', $selectedKCU);
+    session()->put('tanggalAwal', $tanggalawal);
+    session()->put('tanggalAkhir', $tanggalakhir);
+
+    return view('dashboard', [
+        
+'weeklyData' => $weeklyData,
+       
+        'persentaseClosing' => $persentaseClosing,
+      
+        'totalClosingPerKCU' => $totalClosingPerKCU,
+        'dataleads' => $dataleads,
+        'kcu' => $kcu,
+      
+        'dtkcu' => $dtkcu,
+        'totalClosing' => $totalClosing,
+       'Berminat' => $Berminat,
+        'TidakBerminat' => $TidakBerminat,
+        'TidakTerhubung' => $TidakTerhubung,
+        'NoTelpTidakValid' => $NoTelpTidakValid,
+        'DiskusiInternal' => $DiskusiInternal,
+        'CallAgain' => $CallAgain,
+       'persentaseStatusBerminat' =>$persentaseStatusBerminat,
+       'persentaseStatusCallAgain' => $persentaseStatusCallAgain,
+        'persentaseStatusDiskusiInternal'=> $persentaseStatusDiskusiInternal,
+       'persentaseStatusNoTelpTidakValid' =>$persentaseStatusNoTelpTidakValid,
+       'persentaseStatusTidakBerminat'=> $persentaseStatusTidakBerminat,
+       'persentaseStatusTidakTerhubung'=>$persentaseStatusTidakTerhubung,
+       'totalBerminat' => $totalBerminat,
+       'totalNotCall' => $totalNotCall,
+       'totalContacted' => $totalContacted,
+       'totalUnContacted' => $totalUnContacted,
+       'persentaseUnContacted' => $persentaseUnContacted,
+       'persentaseBerminat' => $persentaseBerminat, 
+       'persentaseContacted' => $persentaseContacted,
+       'persentaseNotCall' =>  $persentaseNotCall,
+
+
+       'totalUnContactedPerKCU' => $totalUnContactedPerKCU,
+       'totalNotCallPerKCU' => $totalNotCallPerKCU,
+       'totalBerminatPerKCU' => $totalBerminatPerKCU,
+       'totalContactedPerKCU' => $totalContactedPerKCU,
+
+       'weeklyDataStatus' => $weeklyDataStatus,
+
+       'totalStatusBerminatPerKCU' => $totalStatusBerminatPerKCU,
+       'totalStatusTidakBerminatPerKCU' => $totalStatusTidakBerminatPerKCU,
+       'totalStatusTidakTerhubungPerKCU' => $totalStatusTidakTerhubungPerKCU,
+       'totalStatusNoTelpTidakValidPerKCU' => $totalStatusNoTelpTidakValidPerKCU,
+       'totalStatusDiskusiInternalPerKCU' => $totalStatusDiskusiInternalPerKCU,
+       'totalStatusCallAgainPerKCU' => $totalStatusCallAgainPerKCU,
+
+       'Reaktivasi' => $Reaktivasi,
+       'MigrasiLimit' => $MigrasiLimit,
+       'NotOk' => $NotOk,
+       'Akuisisi' => $Akuisisi,
+       'waitingconfirm' => $waitingconfirm,
+       'persentaseReaktivasi' => $persentaseReaktivasi,
+       'persentaseMigrasiLimit' => $persentaseMigrasiLimit,
+       'persentaseNotOk' => $persentaseNotOk,
+       'persentaseAkuisisi' => $persentaseAkuisisi,
+       'persentasewaitingconfirm' => $persentasewaitingconfirm,
+
+       'weeklyDataAkuisisi' => $weeklyDataAkuisisi,
+    
+       'ReaktivasiPerKCU' => $ReaktivasiPerKCU,
+       'NotOkPerKCU' => $NotOkPerKCU,
+       'MigrasiLimitPerKCU' => $MigrasiLimitPerKCU,
+       'AkuisisiPerKCU' => $AkuisisiPerKCU,
+       'waitingconfirmPerKCU' => $waitingconfirmPerKCU,
+       'totaldataleads' =>  $totaldataleads,
+       'totaldatausageclaimbulansama' => $totaldatausageclaimbulansama,
+       'totaldatausageclaimbedabulan'=> $totaldatausageclaimbedabulan,
+       'ReaktivasiBedaBulan' => $ReaktivasiBedaBulan,
+       'MigrasiLimitBedaBulan' => $MigrasiLimitBedaBulan,
+       'AkuisisiBedaBulan' => $AkuisisiBedaBulan,
+       'waitingconfirmBedaBulan' => $waitingconfirmBedaBulan,
+       'totaldatausageclaimbedabulanPerKCU'=> $totaldatausageclaimbedabulanPerKCU,
+       'totaldatausageclaimbulansamaPerKCU' => $totaldatausageclaimbulansamaPerKCU,
+       'ReaktivasiBedaBulanPerKCU' => $ReaktivasiBedaBulanPerKCU,
+       'MigrasiLimitBedaBulanPerKCU' => $MigrasiLimitBedaBulanPerKCU,
+       'AkuisisiBedaBulanPerKCU' => $AkuisisiBedaBulanPerKCU,
+       'waitingconfirmBedaBulanPerKCU' => $waitingconfirmBedaBulanPerKCU,
+
+        'statusgabunganPerKCU' => $statusgabunganPerKCU,
+        'statusgabungan' => $statusgabungan,
+        'statusgabunganBedaBulanPerKCU' => $statusgabunganBedaBulanPerKCU,
+        'statusgabunganBedaBulan' => $statusgabunganBedaBulan,
+        'persentasestatusgabungan'=> $persentasestatusgabungan,
+        'selectedKCU' =>$selectedKCU,
+        'selectedJenis' => $selectedJenis,
+
+    ]);
+}
 
 }
 

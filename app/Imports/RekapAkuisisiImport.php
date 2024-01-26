@@ -43,6 +43,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
         
         foreach ($rows as $row) { 
          
+          
         
             if (empty(array_filter($row->toArray()))) {
                 // Baris kosong, skip pemrosesan
@@ -92,6 +93,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         if (
                             !empty($row['tanggal_terima_formulir_kbb']) &&
                             !empty($row['tanggal_terima_formulir_kbb_untuk_payroll']) &&
+                            !empty($row['tanggal_buka_limit_fitur_multipayroll_per_cin']) &&
                             strtolower($row['keterangan']) == 'ok fitur'
                         ) {
                             $status_akuisisi = 'Akuisisi';
@@ -104,10 +106,10 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                             } else {
                                 // Tambahkan pengecekan untuk pesan kesalahan jika 'ok fitur' tapi tanggal kosong
                                 if (strtolower($row['keterangan']) == 'ok fitur' &&
-                                    (empty($row['tanggal_terima_formulir_kbb']) || empty($row['tanggal_terima_formulir_kbb_untuk_payroll']))
+                                    (empty($row['tanggal_terima_formulir_kbb']) || empty($row['tanggal_terima_formulir_kbb_untuk_payroll'])|| empty($row['tanggal_buka_limit_fitur_multipayroll_per_cin']))
                                 ) {
                                     // Tampilkan pesan kesalahan
-                                    $errorMessage = 'Ok Fitur tidak dapat diatur ketika Tanggal Terima Formulir KBB dan Tanggal Terima Formulir KBB untuk Payroll kosong atau salah satunya kosong."';
+                                    $errorMessage = 'Ok Fitur tidak dapat diatur ketika Tanggal Terima Formulir KBB , Tanggal Terima Formulir KBB untuk Payroll, dan Tanggal buka limit fitur multipayroll per CIN kosong atau salah satunya kosong."';
                                     throw new \Exception($errorMessage);
                                 } else {
                                     $status_akuisisi = $row['keterangan'];
@@ -119,12 +121,13 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         
                     // Update the existing record
                     $updateData = ([
-                        'tanggal_follow_up' =>$row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'tanggal_follow_up' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') :$this->tanggal_akhir_akuisisi,
                         'tanggal_terima_form_kbb' => $row['tanggal_terima_formulir_kbb'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb'])->format('Y-m-d') : null,
                         'tanggal_terima_form_kbb_payroll' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
                         'status' => 'Berminat',
+                        
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'data_tanggal' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') :$this->tanggal_akhir_akuisisi,
                     ]);
         
 
@@ -137,9 +140,9 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         'jenis_data' => $jenisdata,// Sesuaikan dengan jenis data yang dibuat di DataLeads
                         'status' => 'Berminat',
                         'status_akuisisi' => $status_akuisisi,
-                        'tanggal_follow_up' => null,
+                        'tanggal_follow_up' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') :$this->tanggal_akhir_akuisisi,
                         'kcu' => $this->kcu, 
-                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'data_tanggal' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') :$this->tanggal_akhir_akuisisi,
                     ];
 
                     DataLog::create($logData);
@@ -148,7 +151,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
             }
                 else   {
 
-                  
+               
 
                     $validStatusValuesakuisisi = ['reaktivasi', 'migrasi limit', 'akuisisi', 'not ok', 'ok fitur', 'waiting for confirmation from bca', 'limit sudah terbuka', 'limit sudah terbuka lebih dulu'];
 
@@ -157,6 +160,7 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                     if (
                         !empty($row['tanggal_terima_formulir_kbb']) &&
                         !empty($row['tanggal_terima_formulir_kbb_untuk_payroll']) &&
+                        !empty($row['tanggal_buka_limit_fitur_multipayroll_per_cin']) &&
                         strtolower($row['keterangan']) == 'ok fitur'
                     ) {
                         $status_akuisisi = 'Akuisisi';
@@ -169,10 +173,10 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         } else {
                             // Tambahkan pengecekan untuk pesan kesalahan jika 'ok fitur' tapi tanggal kosong
                             if (strtolower($row['keterangan']) == 'ok fitur' &&
-                                (empty($row['tanggal_terima_formulir_kbb']) || empty($row['tanggal_terima_formulir_kbb_untuk_payroll']))
+                                (empty($row['tanggal_terima_formulir_kbb']) || empty($row['tanggal_terima_formulir_kbb_untuk_payroll'])|| empty($row['tanggal_buka_limit_fitur_multipayroll_per_cin']))
                             ) {
                                 // Tampilkan pesan kesalahan
-                                $errorMessage = 'Ok Fitur tidak dapat diatur ketika Tanggal Terima Formulir KBB dan Tanggal Terima Formulir KBB untuk Payroll kosong atau salah satunya kosong."';
+                                $errorMessage = 'Ok Fitur tidak dapat diatur ketika Tanggal Terima Formulir KBB , Tanggal Terima Formulir KBB untuk Payroll, dan Tanggal buka limit fitur multipayroll per CIN kosong atau salah satunya kosong."';
                                 throw new \Exception($errorMessage);
                             } else {
                                 $status_akuisisi = $row['keterangan'];
@@ -194,10 +198,12 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                         'tanggal_terima_form_kbb_payroll' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
                         'status' => 'Berminat',
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                        'data_tanggal' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') : $this->tanggal_akhir_akuisisi,
                         'tanggal_awal' => $this ->tanggal_awal_akuisisi,
                         'tanggal_akhir' => $this->tanggal_akhir_akuisisi,
                         'kcu' => $this ->kcu,
+                        'tanggal_follow_up' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') : $this->tanggal_akhir_akuisisi,
+
                     ]);
     
                     $newLeadId = DataLeads::where('cust_name', $row['nama_perusahaan'])->first()->id;
@@ -205,12 +211,14 @@ class RekapAkuisisiImport implements ToCollection, WithHeadingRow
                     // Set data untuk DataLog
                     $logData = [
                         'id_data_leads' => $newLeadId,
+                        
                         'jenis_data' => $row['sumber_nasabah'],// Sesuaikan dengan jenis data yang dibuat di DataLeads
                         'status' => 'Berminat',
                         'status_akuisisi' => $status_akuisisi,
-                        'tanggal_follow_up' => null,
+                        'tanggal_follow_up' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') : $this->tanggal_akhir_akuisisi,
                         'kcu' => $this->kcu, 
-                        'data_tanggal' => $row['tanggal_terima_formulir_kbb_untuk_payroll'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_terima_formulir_kbb_untuk_payroll'])->format('Y-m-d') : null,
+                
+                        'data_tanggal' => $row['tanggal_buka_limit_fitur_multipayroll_per_cin'] !== null ? \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_buka_limit_fitur_multipayroll_per_cin'])->format('Y-m-d') : $this->tanggal_akhir_akuisisi,
                     ];
 
                     DataLog::create($logData);

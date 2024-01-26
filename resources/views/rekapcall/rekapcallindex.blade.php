@@ -119,16 +119,20 @@
                     </div>
 
 
+                    
+
+
+
                     <div class="card shadow mb-4">
                     <!-- Page Heading -->
                     <div class="card-header py-3">
-                    <h3 class="h3 mb-2 text-gray-800">Rekap Akuisisi</h3>
+                    <h3 class="h3 mb-2 text-gray-800">Rekap Akuisisi </h3>
 </div>
 
                     <!-- DataTales Example -->
                
                         <div class="card-body py-3">
-                        <form id= "form3"  name="simpanform" onsubmit="return validasiForm()" action="{{route('rekapakuisisi.import')}}" method="POST" enctype="multipart/form-data">
+                        <form id= "form3"  name="simpanform" onsubmit="return validasiForm()" action="{{route('rekapakuisisi.importbulan')}}" method="POST" enctype="multipart/form-data">
                             @csrf
 
                             <div class="form-group mb-4 mt-2">
@@ -146,11 +150,16 @@
                                             </div>
 
 
-                                            <label class="mt-3" for="">Tanggal Awal:</label>
+                                            <!-- <label class="mt-3" for="">Bulan :</label>
+                            <input type="month" id="bulan" name="bulan"> -->
+
+                            <label class="mt-3" for="">Tanggal Awal:</label>
                             <input type="date" id="tanggal_awal" name="tanggal_awal">
 
                             <label class="mt-3" for="">Tanggal Akhir:</label>
                             <input type="date" id="tanggal_akhir" name="tanggal_akhir">
+
+                           
   <div class="form-group mt-3">
     <input type="file" name="file" class="form-control-file" id="exampleFormControlFile1">
   </div>
@@ -163,6 +172,11 @@
                         </div>
                     
                     </div>
+
+
+
+
+
 
                 </div>
                 <!-- /.container-fluid -->

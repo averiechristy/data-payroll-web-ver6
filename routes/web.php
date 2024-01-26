@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardNewController;
 use App\Http\Controllers\DataLeadsController;
 use App\Http\Controllers\KCUController;
 use App\Http\Controllers\RekapAkuisisiController;
@@ -26,6 +27,10 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
 Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('dashboardnew', [DashboardNewController::class, 'index'])->name('dashboardnew');
+
+
 
 Route::get('user/index', [UserController::class, 'index'])->name('user.index');
 Route::get('user/create', [UserController::class,'create'])->name('user.create');
@@ -55,6 +60,7 @@ Route::get('/dataleads/export', [DataLeadsController::class,'export'])->name('da
 
 Route::post('rekapakuisisi/import',[RekapAkuisisiController::class,'import'])->name('rekapakuisisi.import');
 
+Route::post('rekapakuisisi/importbulan',[RekapAkuisisiController::class,'importbulan'])->name('rekapakuisisi.importbulan');
 
 
 Route::post('/filter-data', [DashboardController::class,'filterdata'])->name('filter-data');

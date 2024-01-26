@@ -1,21 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
     <title>Data Payroll</title>
-
     <!-- Custom fonts for this template-->
     <link href="{{asset('vendor/fontawesome-free/css/all.min.css')}}" rel="stylesheet" type="text/css">
     <link
         href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
         rel="stylesheet">
-
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.2/themes/base/jquery-ui.min.css" integrity="sha512-ELV+xyi8IhEApPS/pSj66+Jiw+sOT1Mqkzlh8ExXihe4zfqbWkxPRi8wptXIO9g73FSlhmquFlUOuMSoXz5IRw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -27,7 +23,6 @@
 
 <!-- Sidebar -->
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
-
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" >
        
@@ -140,9 +135,7 @@
                         </a>
                     </div>
                 </li>
-
             </ul>
-
         </nav>
 
 
@@ -158,12 +151,12 @@
                     
                     <div class="Download">
                         <button id="exportPdfButton" style="float: right;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" ><i
-                                class="fas fa-download fa-sm text-white-50"></i> Download Report By Step</button>
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report Status Call</button>
                    
 
 
                         <button id="exportPdfButtonStatus" style="float: right; margin-right:6px;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
-                                class="fas fa-download fa-sm text-white-50"></i> Download Report by Status</button>
+                                class="fas fa-download fa-sm text-white-50"></i> Download Report Hasil Call</button>
 
                                 <button id="exportPdfButtonAkuisisi" style="float: right; margin-right:6px;" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Download Report Akuisisi</button>
@@ -244,42 +237,76 @@
 </div>
 
 </form>
-
-
 </div>
+
 
 <div id ="chartnew">
 
 <div id ="chartstatus">
+<h5 class="mb-0 text-black-800 mb-3" style="float:right; color: black;">Total Data : {{ $totaldataleads}}</h5>
+
                         <!-- Content Row -->
                         
-                        <h5 class="mb-0 text-black-800 mb-3">Data by Step</h5>
-    <hr>
+                        <h5 class="mb-0 text-black-800 mb-3">
+    <span class="font-weight-bold" style="color: black; font-size: 25px">Laporan Status Call </span> 
+
+    <!-- @if(isset($selectedKCU))
+        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
+    @else
+        <span class="" style="color: black;">(All KCU),</span>
+    @endif -->
+
+    @if(isset($selectedJenis))
+        <span class="font-weight-bold" style="color: black; font-size: 25px">{{ $selectedJenis }}</span>
+    @else
+        <span class="font-weight-bold" style="color: black; font-size: 25px">Data Leads / Referral</span>
+    @endif
+
+    <span class="font-weight-bold" style="color: black; font-size: 25px">program Multipayroll</span>
+
+    @if(isset($tanggalAwal) && isset($tanggalAkhir))    
+    
+        @if(date('Y-m-d', strtotime($tanggalAwal)) === date('Y-01-01') && date('Y-m-d', strtotime($tanggalAkhir)) === date('Y-12-31'))
+        <br>
+            <span class="" style="color: black;  font-size: 16px">periode {{ date('Y') }}</span>
+        @else
+        <br>
+            <span class="" style="color: black; font-size: 16px">periode {{ date('d - m - Y', strtotime($tanggalAwal)) }} to {{ date('d - m - Y', strtotime($tanggalAkhir)) }}</span>
+        @endif
+
+    @else
+    <br>
+        <span class="" style="color: black; font-size: 16px">periode {{ date('F Y') }}</span>
+    @endif
+
+
+</h5>
+
+                        <hr>
                         <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1 h5">
                        Total Interested</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalBerminat}} ({{ $persentaseBerminat}} %)</div>
                 </div>
-                
             </div>
         </div>
     </div>
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-success text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-success text-uppercase mb-1 h5">
                         Total Contacted</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalContacted}} ({{ $persentaseContacted}} %)</div>
                 </div>
@@ -290,7 +317,7 @@
 </div>
 
 <!-- Tasks Card Example -->
-<!-- <div class="col-xl-4 col-md-6 mb-4">
+<!-- <div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
@@ -311,12 +338,12 @@
 <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card border-left-danger shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1 h5">
                        Total Uncontacted</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalUnContacted}} ({{ $persentaseUnContacted}} %)</div>
                 </div>
@@ -327,12 +354,12 @@
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-info text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-info text-uppercase mb-1 h5">
                        Total Not Call Yet</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalNotCall}} ({{ $persentaseNotCall}} %)</div>
                 </div>
@@ -347,12 +374,12 @@
 
 <div class="row">
 <!-- Pie Chart -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Total Interested</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Total Interested</h5>
            
         </div>
         <!-- Card Body -->
@@ -365,12 +392,12 @@
     </div>
 </div>
 <!-- Pie Chart -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Total Contacted</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Total Contacted</h5>
            
         </div>
         <!-- Card Body -->
@@ -382,14 +409,14 @@
         </div>
     </div>
 </div>
-
+</div>
 
 <!-- Pie Chart -->
 <!-- <div class="col-xl-4 col-lg-5">
     <div class="card shadow mb-4">
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Total Closing</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Total Closing</h5>
            
         </div>
         <div class="card-body">
@@ -403,10 +430,6 @@
 
 
 
-</div>
-
-
-
 <div class="row">
 <!-- Pie Chart -->
 <div class="col-xl-6 col-lg-5">
@@ -414,7 +437,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Total Uncontacted</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Total Uncontacted</h5>
            
         </div>
         <!-- Card Body -->
@@ -432,7 +455,7 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Total Not Call Yet</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Total Not Call Yet</h5>
            
         </div>
         <!-- Card Body -->
@@ -449,6 +472,7 @@
 <!-- Pie Chart -->
 
 </div>
+
 </div>
 
     <div class="card shadow mb-4">
@@ -460,18 +484,14 @@
         <div class="card-body">
             <div class="">
          
-  <canvas id="myChart"></canvas>
-
-
+            <canvas id="myChart" width="400" height="300"></canvas>
             </div>
           <!-- <small class="text-danger">
             Minggu di bagi dalam kelipatan 7
           </small> -->
         </div>
     </div>
-
 </div>
-
 </div>
 
 <br>
@@ -479,18 +499,55 @@
 
 <div id="chartchart">
 
-<h5 class="mb-0 text-black-800 mb-3">Data by Status</h5>
+<h5 class="mb-0 text-black-800 mb-3" style="float:right; color: black;">Total Data : {{ $totaldataleads}}</h5>
+
+<h5 class="mb-0 text-black-800 mb-3">
+    <span class="font-weight-bold" style="color: black; font-size: 25px">Laporan Hasil Call </span> 
+
+    <!-- @if(isset($selectedKCU))
+        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
+    @else
+        <span class="" style="color: black;">(All KCU),</span>
+    @endif -->
+
+    @if(isset($selectedJenis))
+        <span class="font-weight-bold" style="color: black; font-size: 25px">{{ $selectedJenis }}</span>
+    @else
+        <span class="font-weight-bold" style="color: black; font-size: 25px">Data Leads / Referral</span>
+    @endif
+
+    <span class="font-weight-bold" style="color: black; font-size: 25px">program Multipayroll</span>
+
+    @if(isset($tanggalAwal) && isset($tanggalAkhir))    
+    
+        @if(date('Y-m-d', strtotime($tanggalAwal)) === date('Y-01-01') && date('Y-m-d', strtotime($tanggalAkhir)) === date('Y-12-31'))
+        <br>
+            <span class="" style="color: black;  font-size: 16px">periode {{ date('Y') }}</span>
+        @else
+        <br>
+            <span class="" style="color: black; font-size: 16px">periode {{ date('d - m - Y', strtotime($tanggalAwal)) }} to {{ date('d - m - Y', strtotime($tanggalAkhir)) }}</span>
+        @endif
+
+    @else
+    <br>
+        <span class="" style="color: black; font-size: 16px">periode {{ date('F Y') }}</span>
+    @endif
+
+
+</h5>
+
+
     <hr>
  
                         <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1 h5">
                         Berminat</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Berminat}} ({{ $persentaseStatusBerminat}} %) </div>
                 </div>
@@ -501,12 +558,12 @@
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-dark shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-dark text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-dark text-uppercase mb-1 h5">
                         Tidak Berminat</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$TidakBerminat}} ({{ $persentaseStatusTidakBerminat}} %)</div>
                 </div>
@@ -517,12 +574,12 @@
 </div>
 
 <!-- Tasks Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1 h5">
                         Tidak Terhubung</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$TidakTerhubung}} ({{$persentaseStatusTidakTerhubung}} %)</div>
                 </div>
@@ -538,12 +595,12 @@
 <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-danger shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1 h5">
                        No. Telp Tidak Valid</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$NoTelpTidakValid}} ({{ $persentaseStatusNoTelpTidakValid}} %)</div>
                 </div>
@@ -554,12 +611,12 @@
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-success text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-success text-uppercase mb-1 h5">
                         Diskusi Internal</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$DiskusiInternal}} ({{ $persentaseStatusDiskusiInternal}} %)</div>
                 </div>
@@ -570,12 +627,12 @@
 </div>
 
 <!-- Tasks Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-info text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-info text-uppercase mb-1 h5">
                         Call Again</div>
                     <div class="h5 mb-0 font-weight-bold text-gray-800">{{$CallAgain}} ({{$persentaseStatusCallAgain}} %)</div>
                 </div>
@@ -589,16 +646,14 @@
 
 
 <!-- Area Chart -->
-
-
-<div class="row">
+<div class="row ">
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 ">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Berminat</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Berminat</h5>
            
         </div>
         <!-- Card Body -->
@@ -611,12 +666,12 @@
     </div>
 </div>
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 ">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Tidak Berminat</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Tidak Berminat</h5>
            
         </div>
         <!-- Card Body -->
@@ -628,15 +683,19 @@
         </div>
     </div>
 </div>
+</div>
+
+<div class="row">
+<!-- Pie Chart -->
 
 
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Tidak Terhubung</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Tidak Terhubung</h5>
            
         </div>
         <!-- Card Body -->
@@ -648,7 +707,21 @@
         </div>
     </div>
 </div>
-
+<div class="col-xl-6 col-md-6 mb-2">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h5 class="m-0 font-weight-bold text-primary">No Telp Tidak Valid</h5>           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartNoTelpTidakValid"></canvas>
+            </div>            
+        </div>
+    </div>
+</div>
 
 </div>
 </div>
@@ -656,30 +729,14 @@
 
 <div class="row">
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
-    <div class="card shadow mb-4">
-        <!-- Card Header - Dropdown -->
-        <div
-            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">No Telp Tidak Valid</h6>
-           
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChartNoTelpTidakValid"></canvas>
-            </div>
-            
-        </div>
-    </div>
-</div>
+
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Diskusi Internal</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Diskusi Internal</h5>
            
         </div>
         <!-- Card Body -->
@@ -694,12 +751,12 @@
 
 
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Call Again</h6>
+            <h5 class="m-0 font-weight-bold text-primary">Call Again</h5>
            
         </div>
         <!-- Card Body -->
@@ -712,9 +769,7 @@
     </div>
 </div>
 
-
 </div>
-
 
 <div id="barchart"> 
     <div class="card shadow mb-4">
@@ -726,7 +781,7 @@
         <div class="card-body">
             <div class="">
          
-  <canvas id="myChartStatus"></canvas>
+  <canvas id="myChartStatus" width="400" height="200"></canvas>
 
             </div>
             <!-- <small class="text-danger">
@@ -735,31 +790,58 @@
         </div>
     </div>
     </div>
-    
-
     </div>
-
-
     </div>
-
-
     <br>
 
     <div id="chartakuisisi">
-    <h5 class="mb-0 text-black-800 mb-3">Data by Akuisisi</h5>
+    <h5 class="mb-0 text-black-800 mb-3">
+    <span class="font-weight-bold" style="color: black; font-size: 20px">Laporan Pencapaian Jumlah Akusisi / Usage Nasabah Multipayroll</span> 
+
+    <!-- @if(isset($selectedKCU))
+        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
+    @else
+        <span class="" style="color: black;">(All KCU),</span>
+    @endif
+
+    @if(isset($selectedJenis))
+        <span class="" style="color: black;">{{ $selectedJenis }},</span>
+    @else
+        <span class="" style="color: black;">All Jenis Data,</span>
+    @endif -->
+
+
+    @if(isset($tanggalAwal) && isset($tanggalAkhir))    
+    
+        @if(date('Y-m-d', strtotime($tanggalAwal)) === date('Y-01-01') && date('Y-m-d', strtotime($tanggalAkhir)) === date('Y-12-31'))
+       
+            <span class="" style="color: black;  font-size: 16px">periode {{ date('Y') }}</span>
+        @else
+       
+            <span class="" style="color: black; font-size: 16px">periode {{ date('d - m - Y', strtotime($tanggalAwal)) }} to {{ date('d - m - Y', strtotime($tanggalAkhir)) }}</span>
+        @endif
+
+    @else
+   
+        <span class="" style="color: black; font-size: 16px">periode {{ date('F Y') }}</span>
+    @endif
+
+
+</h5>
+
     <hr>
 
     <div class="row">
 
 <!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-primary shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1">
+                    <div class="text-s font-weight-bold text-primary text-uppercase mb-1 h6">
                        Akuisisi (Closing)</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Akuisisi}} ({{ $persentaseAkuisisi}} %)</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Akuisisi}} </div>
                 </div>
                 
             </div>
@@ -768,14 +850,14 @@
 </div>
 
 <!-- Earnings (Annual) Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-success shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-success text-uppercase mb-1">
-                        Reaktivasi</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$Reaktivasi}} ({{ $persentaseReaktivasi}} %)</div>
+                    <div class="text-s font-weight-bold text-success text-uppercase mb-1 h6">
+                        Migrasi Limit/ Reaktivasi/ Not OK</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$statusgabungan}} </div>
                 </div>
                
             </div>
@@ -783,15 +865,90 @@
     </div>
 </div>
 
-<!-- Tasks Card Example -->
-<div class="col-xl-4 col-md-6 mb-4">
+
+<div class="col-xl-4 col-md-6 mb-2">
+    <div class="card border-left-info shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-info text-uppercase mb-1 h6">
+                      Waiting Confirmation</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$waitingconfirm}}</div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div class="row">
+
+
+
+<div class="col-xl-4 col-md-6 mb-2">
+    <div class="card border-left-danger shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1 h6">
+                       Akuisisi Bulan Lain</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$AkuisisiBedaBulan}} </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Earnings (Annual) Card Example -->
+<div class="col-xl-4 col-md-6 mb-2">
     <div class="card border-left-warning shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1">
-                       Migrasi Limit</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$MigrasiLimit}}({{$persentaseMigrasiLimit}} %)</div>
+                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1 h6">
+                        Migrasi Limit/ Reaktivasi/ Not OK Bulan Lain</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$statusgabunganBedaBulan}} </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="col-xl-4 col-md-6 mb-2">
+    <div class="card border-left-secondary shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-secondary text-uppercase mb-1 h6">
+                      Waiting Confirmation Bulan Lain</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$waitingconfirmBedaBulan}} </div>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div>
+
+
+<div class="row">
+
+<div class="col-xl-6 col-md-6 mb-2">
+    <div class="card border-left-warning shadow h-100 py-2">
+        <div class="card-body">
+            <div class="row no-gutters align-items-center">
+                <div class="col mr-2">
+                    <div class="text-s font-weight-bold text-warning text-uppercase mb-1 h6">
+                       Usage Claim</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totaldatausageclaimbulansama}}</div>
                 </div>
               
             </div>
@@ -800,35 +957,14 @@
 </div>
 
 
-</div>
-
-<div class="row">
-
-<!-- Earnings (Monthly) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
-    <div class="card border-left-danger shadow h-100 py-2">
-        <div class="card-body">
-            <div class="row no-gutters align-items-center">
-                <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-danger text-uppercase mb-1">
-                       Not Ok</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$NotOk}} ({{ $persentaseNotOk}} %)</div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Earnings (Annual) Card Example -->
-<div class="col-xl-6 col-md-6 mb-4">
+<div class="col-xl-6 col-md-6 mb-2">
     <div class="card border-left-info shadow h-100 py-2">
         <div class="card-body">
             <div class="row no-gutters align-items-center">
                 <div class="col mr-2">
-                    <div class="text-s font-weight-bold text-info text-uppercase mb-1">
-                      Waiting Confirmation</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$waitingconfirm}} ({{ $persentasewaitingconfirm}} %)</div>
+                    <div class="text-s font-weight-bold text-info text-uppercase mb-1 h6">
+                      Usage Claim Bulan Lain</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totaldatausageclaimbedabulan}}</div>
                 </div>
                
             </div>
@@ -836,64 +972,98 @@
     </div>
 </div>
 
-<div>
+
+</div>
+
+
 <div class="row">
 <!-- Pie Chart -->
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-lg-5">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div
-            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Akuisisi</h6>
-           
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChartAkuisisi"></canvas>
+        <div class="card shadow mb-2"> <!-- Mengubah mb-4 menjadi mb-2 untuk mengurangi margin bawah -->
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-2 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Akuisisi</h6>
             </div>
-            
+            <!-- Card Body -->
+            <div class="card-body py-2"> <!-- Mengubah pt-4 dan pb-2 menjadi py-2 untuk mengurangi padding atas dan bawah -->
+                <div class="chart-pie"> <!-- Menghapus pt-4 dan pb-2 karena sudah diatur di card-body -->
+                    <canvas id="myPieChartAkuisisi" style="height: 150px; width: 150px;"></canvas> <!-- Mengatur ukuran pie chart sesuai kebutuhan -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 
-<div class="col-xl-4 col-lg-5">
+<div class="col-xl-6 col-lg-5">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div
-            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Reaktivasi</h6>
-           
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChartReaktivasi"></canvas>
+        <div class="card shadow mb-2"> <!-- Mengubah mb-4 menjadi mb-2 untuk mengurangi margin bawah -->
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-2 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Akuisisi Bulan Lain</h6>
             </div>
-            
+            <!-- Card Body -->
+            <div class="card-body py-2"> <!-- Mengubah pt-4 dan pb-2 menjadi py-2 untuk mengurangi padding atas dan bawah -->
+                <div class="chart-pie"> <!-- Menghapus pt-4 dan pb-2 karena sudah diatur di card-body -->
+                    <canvas id="myPieChartAkuisisiBedaBulan" style="height: 150px; width: 150px;"></canvas> <!-- Mengatur ukuran pie chart sesuai kebutuhan -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 
-<div class="col-xl-4 col-lg-5">
+</div>
+
+
+
+<div class="row">
+<!-- Pie Chart -->
+<div class="col-xl-6 col-lg-5">
     <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div
-            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Migrasi Limit</h6>
-           
-        </div>
-        <!-- Card Body -->
-        <div class="card-body">
-            <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChartMigrasiLimit"></canvas>
+        <div class="card shadow mb-2"> <!-- Mengubah mb-4 menjadi mb-2 untuk mengurangi margin bawah -->
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-2 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Usage Claim </h6>
             </div>
-            
+            <!-- Card Body -->
+            <div class="card-body py-2"> <!-- Mengubah pt-4 dan pb-2 menjadi py-2 untuk mengurangi padding atas dan bawah -->
+                <div class="chart-pie"> <!-- Menghapus pt-4 dan pb-2 karena sudah diatur di card-body -->
+                    <canvas id="myPieChartUsageClaim" style="height: 150px; width: 150px;"></canvas> <!-- Mengatur ukuran pie chart sesuai kebutuhan -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+
+<div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div class="card shadow mb-2"> <!-- Mengubah mb-4 menjadi mb-2 untuk mengurangi margin bawah -->
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-2 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Usage Claim Bulan Lain </h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body py-2"> <!-- Mengubah pt-4 dan pb-2 menjadi py-2 untuk mengurangi padding atas dan bawah -->
+                <div class="chart-pie"> <!-- Menghapus pt-4 dan pb-2 karena sudah diatur di card-body -->
+                    <canvas id="myPieChartUsageClaimBedaBulan" style="height: 150px; width: 150px;"></canvas> <!-- Mengatur ukuran pie chart sesuai kebutuhan -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
 
 <div class="row">
 <!-- Pie Chart -->
@@ -902,18 +1072,50 @@
         <!-- Card Header - Dropdown -->
         <div
             class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary">Not Ok</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Migrasi Limit/ Reaktivasi/ Not OK</h6>
            
         </div>
         <!-- Card Body -->
         <div class="card-body">
             <div class="chart-pie pt-4 pb-2">
-                <canvas id="myPieChartNotOk"></canvas>
+                <canvas id="myPieChartStatusGabungan"></canvas>
             </div>
             
         </div>
     </div>
 </div>
+
+<div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-4">
+        <!-- Card Header - Dropdown -->
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Migrasi Limit/ Reaktivasi/ Not OK Bulan Lain</h6>
+           
+        </div>
+        <!-- Card Body -->
+        <div class="card-body">
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartStatusGabunganBedaBulan"></canvas>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+<div class="row">
+<!-- Pie Chart -->
+
 
 
 <div class="col-xl-6 col-lg-5">
@@ -933,31 +1135,27 @@
         </div>
     </div>
 </div>
-</div>
 
 
-<div class="card shadow mb-4">
+<div class="col-xl-6 col-lg-5">
+    <div class="card shadow mb-4">
         <!-- Card Header - Dropdown -->
-        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-            <h6 class="m-0 font-weight-bold text-primary"></h6>
+        <div
+            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+            <h6 class="m-0 font-weight-bold text-primary">Waiting Confirmation Bulan Lain</h6>
+           
         </div>
         <!-- Card Body -->
         <div class="card-body">
-            <div class="">
-         
-  <canvas id="myChartAkuisisi"></canvas>
-
-
+            <div class="chart-pie pt-4 pb-2">
+                <canvas id="myPieChartwaitingconfirmBedaBulan"></canvas>
             </div>
-          <!-- <small class="text-danger">
-            Minggu di bagi dalam kelipatan 7
-          </small> -->
+            
         </div>
     </div>
-
+</div>
 </div>
 
-</div>
 
 </div>
 
@@ -996,6 +1194,12 @@ var interestedData = monthlyData.map(function (data) {
     return data.totalUnContacted;
 });
 
+const allData = contactedData.concat(contactedData, interestedData, notcallData, uncontactedData);
+
+// Menghitung nilai min dan max dari semua dataset secara dinamis
+const minDataValue = Math.min(...allData);
+const maxDataValue = Math.max(...allData);
+
 
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
@@ -1006,27 +1210,27 @@ var myChart = new Chart(ctx, {
             label: 'Contacted',
             data: contactedData,
             backgroundColor: '#36A2EB',
-            barThickness: 10,
+            barThickness: 20,
             borderWidth: 1,
         }, {
             label: 'Interested',
             data: interestedData,
             backgroundColor: '#FF9F40',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 20,
         }, {
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
                 borderWidth: 1,
-                barThickness: 10,
+                barThickness: 20,
             },
             {
                 label: 'UnContacted',
                 data: uncontactedData,
                 backgroundColor: '#FF6384',
                 borderWidth: 1,
-                barThickness: 10,
+                barThickness: 20,
             }
     ]
     },
@@ -1034,8 +1238,8 @@ var myChart = new Chart(ctx, {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 500,
-                min: 0,
+                max: maxDataValue,
+                min: minDataValue,
             }
         }
     }
@@ -1070,6 +1274,12 @@ var interestedData = twomonthdata.map(function (data) {
 });
 
 
+const allData = contactedData.concat(contactedData, interestedData, notcallData, uncontactedData);
+
+// Menghitung nilai min dan max dari semua dataset secara dinamis
+const minDataValue = Math.min(...allData);
+const maxDataValue = Math.max(...allData);
+
 var ctx = document.getElementById('myChart').getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'bar',
@@ -1079,27 +1289,27 @@ var myChart = new Chart(ctx, {
             label: 'Contacted',
             data: contactedData,
             backgroundColor: '#36A2EB',
-            barThickness: 10,
+            barThickness: 50,
             borderWidth: 1,
         }, {
             label: 'Interested',
             data: interestedData,
             backgroundColor: '#FF9F40',
             borderWidth: 1,
-            barThickness: 10,
+            barThickness: 50,
         }, {
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
                 borderWidth: 1,
-                barThickness: 10,
+                barThickness: 50,
             },
             {
                 label: 'UnContacted',
                 data: uncontactedData,
                 backgroundColor: '#FF6384',
                 borderWidth: 1,
-                barThickness: 10,
+                barThickness: 50,
             }
     ]
     },
@@ -1107,8 +1317,8 @@ var myChart = new Chart(ctx, {
         scales: {
             y: {
                 beginAtZero: true,
-                max: 500,
-                min: 0,
+                max: maxDataValue,
+                min: minDataValue,
             }
         }
     }
@@ -1144,6 +1354,11 @@ var uncontactedData = labels.map(function (week) {
   return weeklyData[weekNumber].totalUnContacted;
 });
 
+const allData = contactedData.concat(contactedData, interestedData, notcallData, uncontactedData);
+
+// Menghitung nilai min dan max dari semua dataset secara dinamis
+const minDataValue = Math.min(...allData);
+const maxDataValue = Math.max(...allData);
 
     var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -1154,36 +1369,38 @@ var uncontactedData = labels.map(function (week) {
                 label: 'Contacted',
                 data: contactedData,
                 backgroundColor: '#36A2EB',
-                barThickness: 20,
+                barThickness: 45,
                 borderWidth: 1,
             }, {
                 label: 'Interested',
                 data: interestedData,
                 backgroundColor: '#FF9F40',
                 borderWidth: 1,
-                barThickness: 20,
+                barThickness: 45,
             }, 
             {
                 label: 'Not Call Yet',
                 data: notcallData,
                 backgroundColor: '#9966FF',
                 borderWidth: 1,
-                barThickness: 20,
+                barThickness: 45,
             },
             {
                 label: 'UnContacted',
                 data: uncontactedData,
                 backgroundColor: '#FF6384',
                 borderWidth: 1,
-                barThickness: 20,
+                barThickness: 45,
             }]
         },
         options: {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100,
-                    min: 0,
+                max: maxDataValue,
+                min: minDataValue,
+                
+                
                 }
             }
         }
@@ -1193,6 +1410,7 @@ var uncontactedData = labels.map(function (week) {
 
     var overallTotals = @json($overallTotals);
     var labels = [overallTotals.start_date + ' to ' + overallTotals.end_date];
+
     
     var datasets = [{
     label: 'Berminat',
@@ -1224,7 +1442,16 @@ var uncontactedData = labels.map(function (week) {
 
 }];
 
+const allData = [
+    overallTotals.totalBerminat,
+    overallTotals.totalContacted,
+    overallTotals.totalNotCall,
+    overallTotals.totalUnContacted,
+];
 
+// Menghitung nilai min dan max dari semua data secara dinamis
+const minDataValue = Math.min(...allData);
+const maxDataValue = Math.max(...allData);
 
 var ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -1237,8 +1464,8 @@ var ctx = document.getElementById('myChart').getContext('2d');
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 100,
-                    min: 0,
+                max: maxDataValue,
+                min: minDataValue,
                 }
             }
         }
@@ -1500,7 +1727,7 @@ var overallTotalsAkuisisi = <?php echo json_encode($overallTotalsAkuisisi); ?>;
 // Ambil label dan data dari overallTotalsAkuisisi
 var labelsStatus = [overallTotalsAkuisisi.start_date + ' to ' + overallTotalsAkuisisi.end_date];
 var datasetsStatus = [{
-    label: 'Berminat',
+    label: 'Reaktivasi',
     data: [overallTotalsAkuisisi.Reaktivasi],
     backgroundColor: '#36A2EB',
     borderWidth: 1,
@@ -1508,28 +1735,28 @@ var datasetsStatus = [{
 
 
 }, {
-    label: 'Tidak Berminat',
+    label: 'Migrasi Limit',
     data: [overallTotalsAkuisisi.MigrasiLimit],
     backgroundColor: '#FF6384',
     borderWidth: 1,
                     barThickness: 50,
 
 }, {
-    label: 'Tidak Terhubung',
+    label: 'Akuisisi',
     data: [overallTotalsAkuisisi.Akuisisi],
     backgroundColor: '#4BC0C0',
     borderWidth: 1,
                     barThickness: 50,
 
 }, {
-    label: 'No. Telp Tidak Valid',
+    label: 'Not Ok',
     data: [overallTotalsAkuisisi.NotOk],
     backgroundColor: '#FF9F40',
     borderWidth: 1,
                     barThickness: 50,
 
 }, {
-    label: 'Diskusi Internal',
+    label: 'Waiting Confirmation',
     data: [overallTotalsAkuisisi.waitingconfirm],
     backgroundColor: '#9966FF',
     borderWidth: 1,
@@ -1566,23 +1793,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartAkuisisi");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1627,13 +1893,21 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -1641,6 +1915,397 @@ var myStatusChart = new Chart(ctxStatus, {
        
     });
 </script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartAkuisisiBedaBulan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $AkuisisiBedaBulanPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $AkuisisiBedaBulanPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartUsageClaim");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+   
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $totaldatausageclaimbulansamaPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $totaldatausageclaimbulansamaPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartUsageClaimBedaBulan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $totaldatausageclaimbedabulanPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $totaldatausageclaimbedabulanPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
 
 <script>
     var ctx = document.getElementById("myPieChartReaktivasi");
@@ -1662,7 +2327,7 @@ var myStatusChart = new Chart(ctxStatus, {
     @endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1707,13 +2372,15 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
                     color: '#000'
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -1722,6 +2389,347 @@ var myStatusChart = new Chart(ctxStatus, {
     });
 </script>
 
+
+
+<script>
+    var ctx = document.getElementById("myPieChartReaktivasiBedaBulan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $ReaktivasiBedaBulanPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $ReaktivasiBedaBulanPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartStatusGabungan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $statusgabunganPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $statusgabunganPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+
+<script>
+    var ctx = document.getElementById("myPieChartStatusGabunganBedaBulan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $statusgabunganPerKCUBedaBulan[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $statusgabunganPerKCUBedaBulan[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
 
 
 <script>
@@ -1744,7 +2752,7 @@ var myStatusChart = new Chart(ctxStatus, {
     @endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1789,13 +2797,98 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
                     color: '#000'
                 },
-                position: 'bottom',
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+</script>
+
+
+<script>
+    var ctx = document.getElementById("myPieChartMigrasiLimitBedaBulan");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var dynamicColors = []; // Menampung warna dinamis
+
+    @foreach ($kcu as $item)
+        dynamicColors.push(getRandomColor());
+    @endforeach
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $MigrasiLimitBedaBulanPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $MigrasiLimitBedaBulanPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+           
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{
+              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+            },
+            legend: {
+                display: true,
+                labels: {
+                    color: '#000'
+                },
+                position: 'left',
             }, 
             
         }
@@ -1825,7 +2918,7 @@ var myStatusChart = new Chart(ctxStatus, {
     @endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1870,6 +2963,8 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
@@ -1888,24 +2983,62 @@ var myStatusChart = new Chart(ctxStatus, {
 <script>
     var ctx = document.getElementById("myPieChartwaitingconfirm");
 
-    // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1950,13 +3083,21 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -1964,28 +3105,68 @@ var myStatusChart = new Chart(ctxStatus, {
        
     });
 </script>
-<!-- End of akuisisi Data Pie -->
+
+
 <script>
-    var ctx = document.getElementById("myPieChartInterested");
+    var ctx = document.getElementById("myPieChartwaitingconfirmBedaBulan");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -1999,10 +3180,10 @@ var myStatusChart = new Chart(ctxStatus, {
             datasets: [{
                 data: [
         @if(isset($dataKCU))
-            {{ $totalBerminatPerKCU[$dataKCU->id] ?? 0 }},
+            {{ $waitingconfirmPerKCUBedaBulan[$dataKCU->id] ?? 0 }},
         @else
             @foreach ($kcu as $item)
-                {{ $totalBerminatPerKCU[$item->id] ?? 0 }},
+                {{ $waitingconfirmPerKCUBedaBulan[$item->id] ?? 0 }},
             @endforeach
         @endif
     ],
@@ -2030,19 +3211,157 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
         },
        
     });
+</script>
+<!-- End of akuisisi Data Pie -->
+<script>
+    var ctx = document.getElementById("myPieChartInterested");
+
+    // Fungsi untuk menghasilkan warna acak
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
+    }
+
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
+
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
+    var myPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: [
+    @if(isset($dataKCU))
+        "{{ $dataKCU->nama_kcu }}",
+    @else
+        @foreach ($kcu as $item)
+            "{{ $item->nama_kcu }}",
+        @endforeach
+    @endif
+],
+            datasets: [{
+                data: [
+        @if(isset($dataKCU))
+            {{ $totalBerminatPerKCU[$dataKCU->id] ?? 0 }},
+        @else
+            @foreach ($kcu as $item)
+                {{ $totalBerminatPerKCU[$item->id] ?? 0 }},
+            @endforeach
+        @endif
+    ],
+                backgroundColor: dynamicColors, // Menggunakan warna dinamis
+                hoverBackgroundColor: dynamicColors,
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            cutoutPercentage: 80,
+            plugins: {
+            labels:{              
+                render: 'value',
+                fontColor: '#fff',
+                fontSize:25, 
+                fontWeight: 'bold',
+                
+                outsidePadding : 4,
+                textMargin : 6,
+            },
+            legend: {
+                display: true,
+                labels: {
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
+                },
+                position: 'left',
+            }, 
+            
+        }
+        },
+       
+    });
+
+    
 </script>
 
 
@@ -2051,23 +3370,61 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartContacted");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2109,17 +3466,29 @@ var myStatusChart = new Chart(ctxStatus, {
             cutoutPercentage: 80,
             plugins: {
             labels:{
-              
                 render: 'value',
                 fontColor: '#fff',
+                fontSize:25, 
+                fontWeight: 'bold',
+                
+                outsidePadding : 4,
+                textMargin : 6,
+
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
+            
             
         }
         },
@@ -2145,7 +3514,7 @@ var myStatusChart = new Chart(ctxStatus, {
     @endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2190,6 +3559,8 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
@@ -2209,23 +3580,61 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartUncontacted");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2270,13 +3679,24 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize:25, 
+                fontWeight: 'bold',
+                
+                outsidePadding : 4,
+                textMargin : 6,
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -2290,23 +3710,63 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartNotCall");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2332,8 +3792,7 @@ var myStatusChart = new Chart(ctxStatus, {
                 hoverBorderColor: "rgba(234, 236, 244, 1)",
             }],
         },
-        options: {
-           
+        options: {           
             maintainAspectRatio: false,
             tooltips: {
                 backgroundColor: "rgb(255,255,255)",
@@ -2348,16 +3807,27 @@ var myStatusChart = new Chart(ctxStatus, {
             cutoutPercentage: 80,
             plugins: {
             labels:{
-              
-                render: 'value',
+               
+   render: 'value',
                 fontColor: '#fff',
+                fontSize:25, 
+                fontWeight: 'bold',
+                
+                outsidePadding : 4,
+                textMargin : 6,
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -2545,7 +4015,8 @@ var myChart = new Chart(ctx, {
                 max: 500,
                 min: 0,
             }
-        }
+        },
+        
     }
 });
 @elseif(isset($weeklyDataStatus))
@@ -2721,23 +4192,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartBerminat");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2782,13 +4292,23 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize:25, 
+                fontWeight: 'bold',
+                
+                outsidePadding : 4,
+                textMargin : 6,
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
-                },
-                position: 'bottom',
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                }, 
+                position: 'left',
             }, 
             
         }
@@ -2804,23 +4324,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartTidakBerminat");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2862,16 +4421,26 @@ var myStatusChart = new Chart(ctxStatus, {
             cutoutPercentage: 80,
             plugins: {
             labels:{
-              
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
+               
+                outsidePadding : 4,
+                textMargin : 6,
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -2886,23 +4455,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartTidakTerhubung");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -2947,13 +4555,21 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -2967,23 +4583,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartNoTelpTidakValid");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -3028,13 +4683,21 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -3048,23 +4711,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartDiskusiInternal");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -3109,13 +4811,21 @@ var myStatusChart = new Chart(ctxStatus, {
               
                 render: 'value',
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -3129,23 +4839,62 @@ var myStatusChart = new Chart(ctxStatus, {
     var ctx = document.getElementById("myPieChartCallAgain");
 
     // Fungsi untuk menghasilkan warna acak
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    function getRandomColor(existingColors) {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    var similarColorThreshold = 32;
+
+    function getColorType(color) {
+        // Implement your own logic to determine the color type based on RGB values
+        // For simplicity, let's consider only two types: 'dark' and 'light'
+        var r = parseInt(color.slice(1, 3), 16);
+        var g = parseInt(color.slice(3, 5), 16);
+        var b = parseInt(color.slice(5, 7), 16);
+        var brightness = (r + g + b) / 3;  // You can use a more advanced formula for brightness
+
+        return brightness < 110 ? 'dark' : 'light';
     }
 
-    var dynamicColors = []; // Menampung warna dinamis
+    function isColorTooSimilar(newColor, existingColor) {
+        // Check both similarity in RGB values and color type
+        var r1 = parseInt(newColor.slice(1, 3), 16);
+        var g1 = parseInt(newColor.slice(3, 5), 16);
+        var b1 = parseInt(newColor.slice(5, 7), 16);
 
-    @foreach ($kcu as $item)
-        dynamicColors.push(getRandomColor());
-    @endforeach
+        var r2 = parseInt(existingColor.slice(1, 3), 16);
+        var g2 = parseInt(existingColor.slice(3, 5), 16);
+        var b2 = parseInt(existingColor.slice(5, 7), 16);
+
+        var difference = Math.sqrt(Math.pow(r1 - r2, 2) + Math.pow(g1 - g2, 2) + Math.pow(b1 - b2, 2));
+
+        // Check if the colors are too similar in RGB values and have the same type
+        return difference < similarColorThreshold && getColorType(newColor) === getColorType(existingColor);
+    }
+
+    var newColor;
+    do {
+        color = '#';
+        // Generate color with lower RGB values for a darker shade
+        for (var i = 0; i < 6; i++) {
+            var randomIndex = Math.floor(Math.random() * letters.length);
+            // Reduce the random index to make the color darker
+            var darkerIndex = Math.max(0, randomIndex - 3);
+            color += letters[darkerIndex];
+        }
+    } while (existingColors.some(existingColor => isColorTooSimilar(color, existingColor)));
+
+    return color;
+}
+
+var dynamicColors = [];
+
+@foreach ($kcu as $item)
+    dynamicColors.push(getRandomColor(dynamicColors));
+@endforeach
+
 
     var myPieChart = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: [
     @if(isset($dataKCU))
@@ -3189,14 +4938,23 @@ var myStatusChart = new Chart(ctxStatus, {
             labels:{
               
                 render: 'value',
+                
                 fontColor: '#fff',
+                fontSize: 25, 
+                fontWeight: 'bold',
             },
             legend: {
                 display: true,
                 labels: {
-                    color: '#000'
+                    
+                    color: '#000',
+                    font: {
+                        size: 20,
+                    weight: 'bold'
+                    }
+                    
                 },
-                position: 'bottom',
+                position: 'left',
             }, 
             
         }
@@ -3404,11 +5162,10 @@ $(function() {
     document.getElementById('exportPdfButtonAkuisisi').addEventListener('click', function() {
         // Select the chart container element
         var chartContainer = document.getElementById('chartakuisisi');
-        
-       
+
         // Set options for html2pdf
         var options = {
-            margin: [5, 5, 5, 5], // Adjust margins as needed (top, left, bottom, right)     
+            margin: [3, 3, 3, 3], // Adjust margins as needed (top, left, bottom, right)     
             filename: 'chart_export_akuisisi.pdf',
             image: { type: 'jpeg', quality: 0.98 }, // Set image quality
             html2canvas: { scale: 3 }, // Adjust scale as needed

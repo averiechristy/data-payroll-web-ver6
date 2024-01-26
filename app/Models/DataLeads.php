@@ -35,14 +35,25 @@ class DataLeads extends Model
         'tanggal_terima_form_kbb',
         'tanggal_terima_form_kbb_payroll',
         'data_tanggal',
+        'tanggal_usage_claim',
+        'tanggal_usage_not_claim'
         ];
 
         public function kcuData()
         {
-            return $this->belongsTo(DataKcu::class, 'kcu', 'id');
+            return $this->belongsTo(DataKCU::class, 'kcu', 'id');
         }
         
+        public function datausage()
+        {
     
+            return $this->hasMany(DataUsage::class);
+        }
+        public function dataakuisisi()
+        {
+    
+            return $this->hasMany(DataAkuisisi::class);
+        }
 }
 
 

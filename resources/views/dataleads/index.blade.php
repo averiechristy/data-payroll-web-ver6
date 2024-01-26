@@ -125,12 +125,9 @@ entries
                                           <th>Tanggal Akhir</th>
                                           <th>Nama Customer</th>
                                           <th>No. Telp</th>
-                                          <th>PIC</th>
                                           <th>Status</th>
                                           <th>Status Akuisisi</th>
                                           <th>KCU</th>
-                                          <th>Tanggal Terima Form KBB - Sales</th>
-                                          <th>Tanggal Terima Form KBB Payroll - Cabang</th>
                                           <th>Jenis Data</th>
                                           <th>Tanggal Follow Up</th>
                                           <th>Action</th>
@@ -158,19 +155,14 @@ entries
                                       <td>{{$dataleads -> tanggal_akhir}}</td>
                                   <td>{{$dataleads -> cust_name}}</td>
                                   <td>{{$dataleads -> phone_no}}</td>
-                                  <td>{{$dataleads -> nama_pic_kbb}}</td>
                                   <td>{{$dataleads -> status}}</td>
                                   <td>{{$dataleads -> status_akuisisi}}</td>
                                   <td>{{ $dataleads->kcuData->nama_kcu }}</td>
-                                  <td>{{$dataleads -> tanggal_terima_form_kbb}}</td>
-                                  <td>{{$dataleads -> tanggal_terima_form_kbb_payroll}}</td>
                                   <td>{{$dataleads -> jenis_data}}</td>
                                   <td>{{$dataleads -> tanggal_follow_up}}</td>
                                   <td>
-               
                                   <a href="{{route('tampilnama', $dataleads->id)}}"data-toggle="tooltip" class="btn" title='Edit'><i class="fas fa-fw fa-edit" style="color:orange" ></i></a>                 
 
-                                
                                 
                                   </td>
                                     </tr>

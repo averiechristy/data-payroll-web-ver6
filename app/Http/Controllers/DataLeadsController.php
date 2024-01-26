@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DataAkuisisi;
 use App\Models\DataKCU;
 use App\Models\DataLeads;
+use App\Models\DataUsage;
 use DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -260,15 +262,24 @@ public function filterData(Request $request)
     public function deleteData(Request $request)
     {
         $selectedIds = $request->input('selectedIds');
-
+    
         // Pastikan checkbox dipilih sebelum menghapus
         if (!empty($selectedIds)) {
+            // Cetak IDs yang akan dihapus
+    
             DataLeads::whereIn('id', $selectedIds)->delete();
+    
+            // Cetak SQL yang dihasilkan
+    
+            DataUsage::whereIn('id_data_leads', $selectedIds)->delete();
+    
+            // Cetak SQL yang dihasilkan
+    
+            DataAkuisisi::whereIn('id_data_leads', $selectedIds)->delete();
         }
-
-        $request->session()->flash('error', 'Data Leads Berhasil Di hapus.');
-            return redirect(route('dataleads.index'));
-
-         // Ganti 'route.name' dengan nama route yang sesuai
+    
+        $request->session()->flash('error', 'Data Leads Berhasil Dihapus.');
+        return redirect(route('dataleads.index'));
     }
+    
 }
