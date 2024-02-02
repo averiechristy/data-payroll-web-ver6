@@ -41,6 +41,18 @@
             <span>Data Leads</span></a>
     </li>
 
+
+    <li class="nav-item {{ Request::is('bedabulan/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('bedabulan.index')}}"> 
+            <span>Data Akuisisi Bulan Lain</span></a>
+    </li>
+
+    <li class="nav-item {{ Request::is('usagebedabulan/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('usagebedabulan.index')}}"> 
+            <span>Data Usage  Bulan Lain</span></a>
+    </li>
+
+
     <li class="nav-item {{ Request::is('rekapcall/index') ? 'active' : '' }}">
         <a class="nav-link" href="{{route('rekapcall.index')}}"> 
             <span>Import Data</span></a>

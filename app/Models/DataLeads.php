@@ -36,7 +36,8 @@ class DataLeads extends Model
         'tanggal_terima_form_kbb_payroll',
         'data_tanggal',
         'tanggal_usage_claim',
-        'tanggal_usage_not_claim'
+        'tanggal_usage_not_claim',
+        'tanggal_status',
         ];
 
         public function kcuData()

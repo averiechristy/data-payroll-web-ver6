@@ -60,7 +60,15 @@
         <a class="nav-link" href="{{route('dataleads.index')}}"> 
             <span>Data Leads</span></a>
     </li>
+    <li class="nav-item {{ Request::is('bedabulan/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('bedabulan.index')}}"> 
+            <span>Data Akuisisi Bulan Lain</span></a>
+    </li>
 
+    <li class="nav-item {{ Request::is('usagebedabulan/index') ? 'active' : '' }}">
+        <a class="nav-link" href="{{route('usagebedabulan.index')}}"> 
+            <span>Data Usage  Bulan Lain</span></a>
+    </li>
     <li class="nav-item {{ Request::is('rekapcall/index') ? 'active' : '' }}">
         <a class="nav-link" href="{{route('rekapcall.index')}}"> 
             <span>Import Data</span></a>
@@ -183,6 +191,7 @@
         <label for="exampleInputEmail1">KCU</label>
         <select name="kcu" class="form-select form-control form-select-sm" aria-label=".form-select-sm example">
             <option value="" selected disabled>Pilih KCU </option>
+            <option value="all" {{ (isset($selectedKCU) && $selectedKCU == 'all') ? 'selected' : '' }}>Select All KCU</option>
             @foreach ($kcu as $item)
                 <option value="{{ $item->id }}" {{ (isset($selectedKCU) && $selectedKCU == $item->id) ? 'selected' : '' }}>
                     {{ $item->nama_kcu }}
@@ -192,17 +201,22 @@
     </div>
 </div>
 
+
+
+
 <!-- Earnings (Annual) Card Example -->
 <div class="col-xl-2 col-md-6 mb-4">   
     <div class="form-group">
         <label for="exampleInputEmail1">Jenis Data</label>
         <select name="jenis_data" class="form-select form-select-sm form-control" aria-label=".form-select-sm example">
             <option value="" selected disabled>Pilih Jenis Data</option>
+            <option value="Data Leads/Referral" {{ (isset($selectedJenis) && $selectedJenis == 'Data Leads/Referral') ? 'selected' : '' }}>All Jenis Data</option>
             <option value="Referral" {{ (isset($selectedJenis) && $selectedJenis == 'Referral') ? 'selected' : '' }}>Referral</option>
             <option value="Data Leads" {{ (isset($selectedJenis) && $selectedJenis == 'Data Leads') ? 'selected' : '' }}>Data Leads</option>
         </select>
     </div>
 </div>
+
 
 
 
@@ -250,11 +264,7 @@
                         <h5 class="mb-0 text-black-800 mb-3">
     <span class="font-weight-bold" style="color: black; font-size: 25px">Laporan Status Call </span> 
 
-    <!-- @if(isset($selectedKCU))
-        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
-    @else
-        <span class="" style="color: black;">(All KCU),</span>
-    @endif -->
+   
 
     @if(isset($selectedJenis))
         <span class="font-weight-bold" style="color: black; font-size: 25px">{{ $selectedJenis }}</span>
@@ -504,11 +514,7 @@
 <h5 class="mb-0 text-black-800 mb-3">
     <span class="font-weight-bold" style="color: black; font-size: 25px">Laporan Hasil Call </span> 
 
-    <!-- @if(isset($selectedKCU))
-        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
-    @else
-        <span class="" style="color: black;">(All KCU),</span>
-    @endif -->
+   
 
     @if(isset($selectedJenis))
         <span class="font-weight-bold" style="color: black; font-size: 25px">{{ $selectedJenis }}</span>
@@ -798,17 +804,7 @@
     <h5 class="mb-0 text-black-800 mb-3">
     <span class="font-weight-bold" style="color: black; font-size: 20px">Laporan Pencapaian Jumlah Akusisi / Usage Nasabah Multipayroll</span> 
 
-    <!-- @if(isset($selectedKCU))
-        <span class=""  style="color: black;">({{ $kcu->find($selectedKCU)->nama_kcu }})</span>,
-    @else
-        <span class="" style="color: black;">(All KCU),</span>
-    @endif
-
-    @if(isset($selectedJenis))
-        <span class="" style="color: black;">{{ $selectedJenis }},</span>
-    @else
-        <span class="" style="color: black;">All Jenis Data,</span>
-    @endif -->
+  
 
 
     @if(isset($tanggalAwal) && isset($tanggalAkhir))    

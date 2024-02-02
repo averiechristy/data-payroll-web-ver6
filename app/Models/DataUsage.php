@@ -14,6 +14,7 @@ class DataUsage extends Model
         'tanggal_usage_claim',
         'tanggal_usage_not_claim',
         'kcu',
+        'nama_perusahaan'
 
     ];
 

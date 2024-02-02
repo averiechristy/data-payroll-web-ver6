@@ -15,7 +15,8 @@ class DataAkuisisi extends Model
         'status_akuisisi_baru',
         'kcu',
         'tanggal_usage_claim',
-        'jenis_data'
+        'jenis_data',
+        'nama_perusahaan'
 
     ];
 
@@ -24,5 +25,11 @@ class DataAkuisisi extends Model
 
         return $this->belongsTo(DataLeads::class, 'id_data_leads', 'id_data_leads');
     
+    }
+
+    public function datalead()
+    {
+
+        return $this->belongsTo(DataLeads::class);
     }
 }

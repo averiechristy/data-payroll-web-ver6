@@ -69,9 +69,10 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
     
                 $existingLead = DataLeads::where('cust_name', $namaPerusahaanLowercase)
                     ->where('kcu', $this->kcu)
-                    ->orderBy('tanggal_follow_up', 'asc') // Order by date in descending order
+                    ->orderBy('tanggal_akhir', 'desc') // Order by date in descending order
                     ->first();
 
+                 
     
 
              if (!is_null($existingLead)) {
@@ -173,7 +174,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                     $updateData = [
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' =>  $this->tanggal_akhir_akuisisi,
+                        'tanggal_status' =>  $this->tanggal_akhir_akuisisi,
                         'tanggal_usage_claim' =>  $this->tanggal_akhir_akuisisi,
                  
                     ];
@@ -189,7 +190,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                         $updateData = [
                             'status_akuisisi' => $status_akuisisi,
-                            'data_tanggal' => $this->tanggal_akhir_akuisisi,
+                            'tanggal_status' => $this->tanggal_akhir_akuisisi,
                                                  
                         ];
 
@@ -198,7 +199,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                    } else if($status_akuisisi == "Migrasi Limit") {
                     $updateData = [
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' =>  $this->tanggal_akhir_akuisisi,
+                        'tanggal_status' =>  $this->tanggal_akhir_akuisisi,
                         'tanggal_usage_not_claim' =>  $this->tanggal_akhir_akuisisi,
                     ];
 
@@ -211,7 +212,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                    } else if($status_akuisisi == "Reaktivasi") {
                       $updateData = [
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' =>  $this->tanggal_akhir_akuisisi,
+                        'tanggal_status' =>  $this->tanggal_akhir_akuisisi,
                         'tanggal_usage_not_claim' =>  $this->tanggal_akhir_akuisisi,
               
                     ];
@@ -223,7 +224,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                    }else if($status_akuisisi == "Migrasi Limit/ Reaktivasi/ Not OK") {
                     $updateData = [
                       'status_akuisisi' => $status_akuisisi,
-                      'data_tanggal' =>  $this->tanggal_akhir_akuisisi,
+                      'tanggal_status' =>  $this->tanggal_akhir_akuisisi,
                       'tanggal_usage_not_claim' =>  $this->tanggal_akhir_akuisisi,
             
                   ];
@@ -238,7 +239,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                     $updateData = [
                         'status_akuisisi' => $status_akuisisi,
-                        'data_tanggal' =>  $this->tanggal_akhir_akuisisi,
+                        'tanggal_status' =>  $this->tanggal_akhir_akuisisi,
                                              
                     ];
                    
@@ -268,6 +269,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                                     // Jika belum ada, buat entri baru
                                     $createUsage = [
                                         'id_data_leads' => $existingLead->id,
+                                        'nama_perusahaan' =>$existingLead->cust_name,
                                         'tanggal_usage_claim' => $this->tanggal_akhir_akuisisi,
                                         'kcu' => $existingLead->kcu,
                                         'jenis_data' => $existingLead->jenis_data
@@ -283,7 +285,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                             }
                         }
                         
-                           else  if ($existingLead->status_akuisisi == "Waiting confirmation from BCA") {
+                           else   {
                         
                             $existingLeadConfirm = DataAkuisisi::join('data_leads', 'data_leads.id', '=', 'data_akuisisis.id_data_leads')
                             ->where('data_leads.cust_name', $namaPerusahaanLowercase)
@@ -495,7 +497,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
           
                               $createUsage = [
                                   'id_data_leads' => $existingLead->id,
-          
+                                  'nama_perusahaan' =>$existingLead->cust_name,
                                   'status_akuisisi' => $status_akuisisi,
                                   'tanggal_usage_claim' => $this->tanggal_akhir_akuisisi,
                                   'kcu' => $existingLead->kcu,
@@ -506,6 +508,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
           
                               $createakuisisi =[
                                   'id_data_leads' => $existingLead->id,
+                                  'nama_perusahaan' =>$existingLead->cust_name,
                                   'status_akuisisi_baru' => $status_akuisisi,
                                   'tanggal_status' => $this->tanggal_akhir_akuisisi,
                                   'kcu' => $existingLead->kcu,
@@ -528,6 +531,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
           
                                   $createakuisisi =[
                                       'id_data_leads' => $existingLead->id,
+                                      'nama_perusahaan' =>$existingLead->cust_name,
                                       'status_akuisisi_baru' => $status_akuisisi,
                                       'tanggal_status' => $this->tanggal_akhir_akuisisi,
                                       'kcu' => $existingLead->kcu,
@@ -540,6 +544,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                              } else {
                               $createakuisisi =[
                                   'id_data_leads' => $existingLead->id,
+                                  'nama_perusahaan' =>$existingLead->cust_name,
                                   'status_akuisisi_baru' => $status_akuisisi,
                                   'tanggal_status' => $this->tanggal_akhir_akuisisi,
                                   'kcu' => $existingLead->kcu,
@@ -636,7 +641,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                     $createUsage = [
                         'id_data_leads' => $existingLead->id,
-
+                        'nama_perusahaan' =>$existingLead->cust_name,
                         'status_akuisisi' => $status_akuisisi,
                         'tanggal_usage_claim' => $this->tanggal_akhir_akuisisi,
                         'kcu' => $existingLead->kcu,
@@ -647,6 +652,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                     $createakuisisi =[
                         'id_data_leads' => $existingLead->id,
+                        'nama_perusahaan' =>$existingLead->cust_name,
                         'status_akuisisi_baru' => $status_akuisisi,
                         'tanggal_status' => $this->tanggal_akhir_akuisisi,
                         'kcu' => $existingLead->kcu,
@@ -670,6 +676,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                         $createakuisisi =[
                             'id_data_leads' => $existingLead->id,
+                            'nama_perusahaan' =>$existingLead->cust_name,
                             'status_akuisisi_baru' => $status_akuisisi,
                             'tanggal_status' => $this->tanggal_akhir_akuisisi,
                             'kcu' => $existingLead->kcu,
@@ -682,6 +689,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                    } else {
                     $createakuisisi =[
                         'id_data_leads' => $existingLead->id,
+                        'nama_perusahaan' =>$existingLead->cust_name,
                         'status_akuisisi_baru' => $status_akuisisi,
                         'tanggal_status' => $this->tanggal_akhir_akuisisi,
                         'kcu' => $existingLead->kcu,
@@ -700,10 +708,10 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                            } 
                            
-                           else {
-                            throw new \Exception("Nama perusahaan '{$row['nama_perusahaan']}'tidak dengan status akuisisi atau waiting confirmation");       
+                        //    else {
+                        //     throw new \Exception("Nama perusahaan '{$row['nama_perusahaan']}'tidak dengan status akuisisi atau waiting confirmation");       
 
-                           }
+                        //    }
                        
                     } else {
                         throw new \Exception("Nama perusahaan '{$row['nama_perusahaan']}' tidak terdapat pada data leads maupun referral.");       

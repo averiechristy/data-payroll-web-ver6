@@ -7,6 +7,8 @@ use App\Http\Controllers\DataLeadsController;
 use App\Http\Controllers\KCUController;
 use App\Http\Controllers\RekapAkuisisiController;
 use App\Http\Controllers\RekapCallController;
+use App\Http\Controllers\TampilanBedaBulan;
+use App\Http\Controllers\TampilanUsageBedaBulan;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -78,6 +80,10 @@ Route::get('/tampilnama/{id}',[DataLeadsController::class,'show'])->name('tampil
 
 
 Route::post('/updatenama/{id}',[DataLeadsController::class,'update'])->name('updatenama');
+
+Route::get('bedabulan/index', [TampilanBedaBulan::class, 'index'])->name('bedabulan.index');
+
+Route::get('usagebedabulan/index', [TampilanUsageBedaBulan::class, 'index'])->name('usagebedabulan.index');
 
 
 });

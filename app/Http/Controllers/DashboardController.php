@@ -241,7 +241,8 @@ $AkuisisiBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru',
 $waitingconfirmBedaBulan = $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Waiting confirmation from BCA')->count();
 
 $statusgabungan =  $dataleads->where('status_akuisisi', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
-$statusgabunganBedaBulan =  $datastatusakuisisibedabulan->where('status_akuisisi', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+$statusgabunganBedaBulan =  $datastatusakuisisibedabulan->where('status_akuisisi_baru', 'Migrasi Limit/ Reaktivasi/ Not OK')->count();
+
 
 
 $statusgabunganPerKCU = [];
@@ -563,6 +564,7 @@ public function filterdata(Request $request)
     $tanggalakhir = $request->input('tanggal_akhir');
 
 
+
     if ($tanggalakhir < $tanggalawal) {
             
         $request->session()->flash('error', 'Tanggal Akhir tidak boleh kurang dari Tanggal Awal.');
@@ -642,15 +644,7 @@ public function filterdata(Request $request)
             // ...
         } else {
         
-            // Jika salah satu atau kedua tanggal tidak diisi, tetap gunakan filter tanggal bulan ini
-            // $today = Carbon::now();
-            // $startOfMonth = $today->startOfMonth();
-            // $endOfMonth = $today->copy()->endOfMonth();
-
-            // $today = Carbon::now();
-            // $endOfMonth = $today->endOfMonth();
-            // $currentWeekStart = $today->copy()->startOfMonth();  
-
+        
             
     $today = Carbon::now();
     $monthstart = $today->startOfMonth();
@@ -674,14 +668,14 @@ public function filterdata(Request $request)
         
       
         
-        if ($selectedKCU) {
+        if ($selectedKCU && $selectedKCU !== "all") {
             $dataleads->where('kcu', $selectedKCU);
             $datausageclaimbulansama->where('kcu', $selectedKCU);
             $datausageclaimbedabulan->where('kcu', $selectedKCU);
             $datastatusakuisisibedabulan->where('kcu', $selectedKCU);
         }
         
-        if ($selectedJenis) {
+        if ($selectedJenis && $selectedJenis!=="Data Leads/Referral") {
             $dataleads->where('jenis_data', $selectedJenis);
             $datausageclaimbulansama->where('jenis_data', $selectedJenis);
             $datausageclaimbedabulan->where('jenis_data', $selectedJenis);

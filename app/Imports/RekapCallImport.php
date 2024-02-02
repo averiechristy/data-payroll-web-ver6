@@ -43,7 +43,7 @@ class RekapCallImport implements ToCollection, WithHeadingRow
 
         foreach ($rows as $row) {
 
-            
+          
            
             if (empty(array_filter($row->toArray()))) {
                 // Baris kosong, skip pemrosesan
@@ -87,16 +87,27 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                         }
                     }
                     
-                        $tanggalFollowUp = null;
-                        // Check if 'tanggal_follow_up' is not null in the Excel data
-                        if (!is_null($row['tanggal_follow_up'])) {
-                            try {
-                                $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);                    
-                            } catch (\Exception $e) {
-                                // Jika tidak valid, buat pesan error
-                                throw new \Exception("Invalid date format '{$row['tanggal_follow_up']}'.");
-                            }
-                        }            
+                
+                    $tanggalFollowUp = null;
+
+                    // Check if 'tanggal_follow_up' is not null in the Excel data
+                    if (!is_null($row['tanggal_follow_up'])) {
+                        // Check if 'tanggal_follow_up' is a string
+                        if (is_string($row['tanggal_follow_up'])) {
+                            // Jika 'tanggal_follow_up' berupa string, buat pesan kesalahan
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
+                        }
+                    
+                        try {
+                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);
+                        } catch (\Exception $e) {
+                            // Jika tidak valid, buat pesan error
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
+                        }
+                    } else if (is_null($row['tanggal_follow_up'])){
+                        throw new \Exception("Terdapat Tanggal Follow Up yang kosong");
+                    }
+                    
 
                         $updateData = [
                             'jenis_data' => $row['data_leads_referral_cabang'],
@@ -163,15 +174,24 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                 if ($row['data_leads_referral_cabang'] === 'Data Leads') {
 
                     $tanggalFollowUp = null;
+
                     // Check if 'tanggal_follow_up' is not null in the Excel data
                     if (!is_null($row['tanggal_follow_up'])) {
+                        // Check if 'tanggal_follow_up' is a string
+                        if (is_string($row['tanggal_follow_up'])) {
+                            // Jika 'tanggal_follow_up' berupa string, buat pesan kesalahan
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
+                        }
+                    
                         try {
-                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);                    
+                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);
                         } catch (\Exception $e) {
                             // Jika tidak valid, buat pesan error
-                            throw new \Exception("Invalid date format '{$row['tanggal_follow_up']}'.");
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
                         }
-                    }            
+                    } else if (is_null($row['tanggal_follow_up'])){
+                        throw new \Exception("Terdapat Tanggal Follow Up yang kosong");
+                    }     
 
                     $tanggal_awal_rekap_call = new \DateTime($this->tanggal_awal_call);
                     $tanggal_akhir_rekap_call = new \DateTime($this->tanggal_akhir_call);
@@ -216,15 +236,24 @@ class RekapCallImport implements ToCollection, WithHeadingRow
                 else if ($row['data_leads_referral_cabang'] === 'Referral') {
 
                     $tanggalFollowUp = null;
+
                     // Check if 'tanggal_follow_up' is not null in the Excel data
                     if (!is_null($row['tanggal_follow_up'])) {
+                        // Check if 'tanggal_follow_up' is a string
+                        if (is_string($row['tanggal_follow_up'])) {
+                            // Jika 'tanggal_follow_up' berupa string, buat pesan kesalahan
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
+                        }
+                    
                         try {
-                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);                    
+                            $tanggalFollowUp = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row['tanggal_follow_up']);
                         } catch (\Exception $e) {
                             // Jika tidak valid, buat pesan error
-                            throw new \Exception("Invalid date format '{$row['tanggal_follow_up']}'.");
+                            throw new \Exception("Format Tanggal Salah '{$row['tanggal_follow_up']}'.");
                         }
-                    }            
+                    } else if (is_null($row['tanggal_follow_up'])){
+                        throw new \Exception("Terdapat Tanggal Follow Up yang kosong");
+                    }     
 
                     $tanggal_awal_rekap_call = new \DateTime($this->tanggal_awal_call);
                     $tanggal_akhir_rekap_call = new \DateTime($this->tanggal_akhir_call);
