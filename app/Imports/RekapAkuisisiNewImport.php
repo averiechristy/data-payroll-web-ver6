@@ -57,6 +57,8 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
      
             foreach ($collection as $row) {
 
+             
+              
                 if (empty(array_filter($row->toArray()))) {
                     // Baris kosong, skip pemrosesan
                     continue;
@@ -117,6 +119,14 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                         $status_akuisisi = "Akuisisi";
                     }
 
+                     else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        ($row['konfirmasi_cmc'] == "Y")
+                    ){
+                        $status_akuisisi = "Akuisisi";
+                    }
+
                     else if (
                         ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
                         ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
@@ -160,7 +170,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
 
                      else {
-                        throw new \Exception("Tidak ditemukan status yang sesuai.");       
+                        $status_akuisisi = "Waiting confirmation from BCA";     
 
                     }
 
@@ -326,7 +336,13 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                                 ){
                                     $status_akuisisi = "Akuisisi";
                                 }
-            
+                                else if (
+                                    ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                                    ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                                    ($row['konfirmasi_cmc'] == "Y")
+                                ){
+                                    $status_akuisisi = "Akuisisi";
+                                }
                                 else if (
                                     ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
                                     ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
@@ -368,7 +384,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                                 }
             
                                  else {
-                                    throw new \Exception("Tidak ditemukan status yang sesuai.");       
+                                    $status_akuisisi = "Waiting confirmation from BCA";          
             
                                 }
             
@@ -440,7 +456,13 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                             ){
                                 $status_akuisisi = "Akuisisi";
                             }
-        
+                            else if (
+                                ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                                ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                                ($row['konfirmasi_cmc'] == "Y")
+                            ){
+                                $status_akuisisi = "Akuisisi";
+                            }
                             else if (
                                 ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
                                 ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
@@ -482,7 +504,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                             }
         
                              else {
-                                throw new \Exception("Tidak ditemukan status yang sesuai.");       
+                                $status_akuisisi = "Waiting confirmation from BCA";           
         
                             }
         
@@ -584,7 +606,13 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                             ){
                                 $status_akuisisi = "Akuisisi";
                             }
-        
+                            else if (
+                                ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                                ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                                ($row['konfirmasi_cmc'] == "Y")
+                            ){
+                                $status_akuisisi = "Akuisisi";
+                            }
                             else if (
                                 ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
                                 ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
@@ -626,7 +654,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                             }
         
                              else {
-                                throw new \Exception("Tidak ditemukan status yang sesuai.");       
+                                $status_akuisisi = "Waiting confirmation from BCA";     
         
                             }
         
@@ -666,8 +694,7 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
 
                     DataAkuisisi::create($createakuisisi);
 
-                  
-
+                
                    } else  if($status_akuisisi == "Akuisisi" &&
                    empty($row['usage_transaksi']) &&
                         empty($row['frekuensi_transaksi']) &&
@@ -716,9 +743,139 @@ class RekapAkuisisiNewImport implements ToCollection, WithHeadingRow
                     } else {
                         throw new \Exception("Nama perusahaan '{$row['nama_perusahaan']}' tidak terdapat pada data leads maupun referral.");       
                     }
-                } else {
+                } else if (is_null($existingLead)) {
+                    if ($row['callvisit'] === 'Visit'){
+                        
+
+                     
+
+
+                        $lastNo = DataLeads::max('no');
+                        // Menambahkan 1 ke nomor terakhir
+                        $newNo = $lastNo + 1;
+
+                        $status_akuisisi = null;
+
+                        if (empty($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada']) &&
+                        empty($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada']) &&
+                        empty($row['konfirmasi_cmc'])) {
+                        $status_akuisisi = "Waiting confirmation from BCA";
+                    } else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "N") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        empty($row['konfirmasi_cmc'])
+                    ) {
+                        $status_akuisisi = "Waiting confirmation from BCA";
+                    } else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "N") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        ($row['konfirmasi_cmc'] == "Y")
+                    ){
+                        $status_akuisisi = "Akuisisi";
+                    } else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "N") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "Y") &&
+                        ($row['konfirmasi_cmc'] == "Y")
+                    ){
+                        $status_akuisisi = "Akuisisi";
+                    }
+                    else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        ($row['konfirmasi_cmc'] == "Y")
+                    ){
+                        $status_akuisisi = "Akuisisi";
+                    }
+                    else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        empty($row['konfirmasi_cmc'])
+                    ){
+                        $status_akuisisi = "Waiting confirmation from BCA";
+                    }else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        ($row['konfirmasi_cmc'] == "N")
+                    ){
+                        $status_akuisisi = "Migrasi Limit/ Reaktivasi/ Not OK";
+                    }else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "Y") &&
+                        empty($row['konfirmasi_cmc'])
+                    ){
+                        $status_akuisisi = "Waiting confirmation from BCA";
+                    }else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "Y") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "Y") &&
+                        ($row['konfirmasi_cmc'] == "N")
+                    ){
+                        $status_akuisisi = "Migrasi Limit/ Reaktivasi/ Not OK";
+                    }
+                    else if (
+                        ($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada'] == "N") &&
+                        ($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada'] == "N") &&
+                        ($row['konfirmasi_cmc'] == "N")
+                    ){
+                        $status_akuisisi = "Migrasi Limit/ Reaktivasi/ Not OK";
+                    }
+
+                    else if (
+                        empty($row['limit_payroll_y_sudah_ada_sebelumnya_n_blm_ada']) &&
+                        empty($row['termasuk_reaktivasi_y_tidak_ada_penggunaan_sejak_1_jan_22_n_sudah_ada']) &&
+                        empty($row['konfirmasi_cmc'])
+                    ){
+                        $status_akuisisi = "Waiting confirmation from BCA";
+                    }
+
+
+                     else {
+                        $status_akuisisi = "Waiting confirmation from BCA";     
+
+                    }
+
+
+
+  if($status_akuisisi == "Akuisisi" &&
+                  !empty($row['usage_transaksi']) &&
+                       !empty($row['frekuensi_transaksi']) &&
+                       !empty($row['tanggal_transaksi_multi_payroll'])
+                   ) {
+                        $createakuisisivisit =[
+                            'no' => $newNo,
+                            'cust_name' => $row['nama_perusahaan'],
+                            'jenis_data' => $row['sumber_nasabah'],
+                            'kcu' => $this->kcu, 
+                            'tanggal_awal' => $this->tanggal_awal_akuisisi,
+                            'tanggal_akhir' =>$this->tanggal_akhir_akuisisi,
+                            'status_akuisisi' => $status_akuisisi ,
+                            'data_tanggal' => $this->tanggal_akhir_akuisisi,
+                            'tanggal_status' => $this->tanggal_akhir_akuisisi,
+                            'tanggal_usage_claim' => $this->tanggal_akhir_akuisisi,
+                        ]; 
+
+                        
+                        DataLeads::create($createakuisisivisit);
+
+                    } else {
+                        $createakuisisivisit =[
+                            'no' => $newNo,
+                            'cust_name' => $row['nama_perusahaan'],
+                            'jenis_data' => $row['sumber_nasabah'],
+                            'kcu' => $this->kcu, 
+                            'tanggal_awal' => $this->tanggal_awal_akuisisi,
+                            'tanggal_akhir' =>$this->tanggal_akhir_akuisisi,
+                            'status_akuisisi' => $status_akuisisi ,
+                            'data_tanggal' => $this->tanggal_akhir_akuisisi,
+                            'tanggal_status' => $this->tanggal_akhir_akuisisi,
+                        ]; 
+
+                      
+                        DataLeads::create($createakuisisivisit);
+                    }
+
+                    } else {
                     throw new \Exception("Nama perusahaan '{$row['nama_perusahaan']}' tidak terdapat pada data leads maupun referral.");       
-                
+                    }
                 }
             }
 

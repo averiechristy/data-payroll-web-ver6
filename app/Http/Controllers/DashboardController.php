@@ -230,6 +230,7 @@ $CallAgain = $dataleads->where('status', 'Call Again')->count();
 $Reaktivasi = $dataleads->where('status_akuisisi', 'Reaktivasi')->count();
 $MigrasiLimit = $dataleads->where('status_akuisisi', 'Migrasi Limit')->count();
 $Akuisisi = $dataleads->where('status_akuisisi', 'Akuisisi')->count();
+
 $NotOk = $dataleads->where('status_akuisisi', 'Not Ok')->count();
 $waitingconfirm = $dataleads->where('status_akuisisi', 'Waiting confirmation from BCA')->count();
 
